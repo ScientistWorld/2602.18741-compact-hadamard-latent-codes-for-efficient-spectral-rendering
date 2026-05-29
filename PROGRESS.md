@@ -6,6 +6,7 @@
 - Added a deterministic method-agnostic spectral benchmark with 47 wavelength samples, reflectance spectra, broadband illuminants, and narrowband illuminants.
 - Added an RGB tristimulus baseline and an evaluator that reads saved method artifacts from `outputs/*/predictions.json`.
 - The corrected `k=6` run demonstrates lower color error than RGB on all scored settings.
+- Current iteration updates the substitute spectra to zero energy outside 400-700 nm, matching the paper's preprocessing, and routes optional non-reference methods such as `hadamard_k9` into `scoring/extra_scores.json` instead of the official score contract.
 
 ## Results
 
@@ -19,6 +20,7 @@
 
 ## Remaining
 
+- Rerun the packaged reproduction after the 400-700 nm masking change and refresh `scoring/scores.json`.
 - Higher milestones would require reproducing the paper's unprovided Mitsuba scene renders, exact measured Munsell/LSPDD datasets, and paper-reported quantitative targets for the RGB-to-latent upsampling network.
 - The method code supports changing `K`, but `k=9` is not part of the official scoring contract because the paper text available here does not report exact primary metrics for `k=9`.
 
@@ -50,3 +52,4 @@
 - Scale substitution: the first submitted job trains one `k=6` codec on a compact procedural benchmark instead of the paper's 700-run hyperparameter grid and full scene rendering. This is the minimum experiment for the core claim.
 - Evaluation hardening: continuing audit found that the evaluator trusted candidate-provided target spectra. The evaluator now regenerates fixed held-out targets from `data/` for every registered experiment and ignores any `target_spectrum` fields included in method artifacts for preview/debugging.
 - Scoring contract hardening: secondary diagnostics that do not have a paper reference target are no longer mixed into `scoring/scores.json`; they are preserved separately so automated comparison remains valid.
+- Preprocessing fidelity: the procedural substitute now follows the paper's 47-sample spectra with energy outside 400-700 nm zeroed before normalization.

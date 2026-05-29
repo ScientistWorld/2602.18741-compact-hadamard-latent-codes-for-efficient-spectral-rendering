@@ -15,10 +15,21 @@ from dataclasses import dataclass
 import numpy as np
 
 WAVELENGTHS = np.linspace(368.0, 830.0, 47, dtype=np.float32)
+VISIBLE_MASK = ((WAVELENGTHS >= 400.0) & (WAVELENGTHS <= 700.0)).astype(np.float32)
 
 
 def _gaussian(center: float, width: float) -> np.ndarray:
     return np.exp(-0.5 * ((WAVELENGTHS - center) / width) ** 2).astype(np.float32)
+
+
+def _visible(spec: np.ndarray) -> np.ndarray:
+    """Match the paper's 47-sample grid with zero energy outside 400-700 nm."""
+    return (np.asarray(spec, dtype=np.float32) * VISIBLE_MASK).astype(np.float32)
+
+
+def _normalize_visible(spec: np.ndarray) -> np.ndarray:
+    spec = _visible(spec)
+    return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
 
 
 def color_matching_functions() -> np.ndarray:
@@ -30,7 +41,7 @@ def color_matching_functions() -> np.ndarray:
     )
     y = 0.82 * _gaussian(568.8, 46.9) + 0.29 * _gaussian(530.9, 16.3)
     z = 1.22 * _gaussian(437.0, 31.0) + 0.05 * _gaussian(459.0, 13.8)
-    cmf = np.stack([np.clip(x, 0, None), np.clip(y, 0, None), np.clip(z, 0, None)], axis=0)
+    cmf = np.stack([_visible(np.clip(x, 0, None)), _visible(np.clip(y, 0, None)), _visible(np.clip(z, 0, None))], axis=0)
     cmf /= np.maximum(cmf.sum(axis=1, keepdims=True), 1e-8)
     return cmf.astype(np.float32)
 
@@ -46,7 +57,7 @@ def latent_band_basis(num_bands: int = 6) -> np.ndarray:
         centers = (405.0, 455.0, 505.0, 555.0, 615.0, 690.0)
     else:
         centers = tuple(np.linspace(395.0, 705.0, num_bands))
-    bands = np.stack([_gaussian(c, 18.0) for c in centers], axis=0)
+    bands = np.stack([_visible(_gaussian(c, 18.0)) for c in centers], axis=0)
     bands /= np.maximum(bands.max(axis=1, keepdims=True), 1e-8)
     return bands.astype(np.float32)
 
@@ -102,7 +113,7 @@ def _smooth_random_spectrum(rng: np.random.Generator, low: float, high: float) -
     amps = rng.uniform(0.2, 1.0, size=centers.size)
     spec = sum(float(a) * _gaussian(float(c), float(w)) for a, c, w in zip(amps, centers, widths))
     spec += rng.uniform(0.02, 0.12)
-    return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
+    return _normalize_visible(spec)
 
 
 def _reflectance(rng: np.random.Generator) -> np.ndarray:
@@ -115,7 +126,7 @@ def _reflectance(rng: np.random.Generator) -> np.ndarray:
         coeff[swap] = coeff[swap[::-1]]
     spec = 0.025 + coeff @ bands
     spec += 0.035 * _smooth_random_spectrum(rng, 35.0, 120.0)
-    return np.clip(spec / max(float(spec.max()), 1e-8), 0.0, 1.0).astype(np.float32)
+    return np.clip(_normalize_visible(spec), 0.0, 1.0).astype(np.float32)
 
 
 def _broadband_illumination(rng: np.random.Generator) -> np.ndarray:
@@ -124,7 +135,7 @@ def _broadband_illumination(rng: np.random.Generator) -> np.ndarray:
     coeff = 0.65 * coeff + 0.35 * np.roll(coeff, rng.integers(1, bands.shape[0]))
     spec = 0.10 + coeff @ bands
     spec += 0.15 * _smooth_random_spectrum(rng, 70.0, 160.0)
-    return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
+    return _normalize_visible(spec)
 
 
 def _narrowband_illumination(rng: np.random.Generator) -> np.ndarray:
@@ -135,7 +146,7 @@ def _narrowband_illumination(rng: np.random.Generator) -> np.ndarray:
         center = WAVELENGTHS[int(np.argmax(bands[idx]))] + rng.uniform(-4.0, 4.0)
         spec += rng.uniform(0.55, 1.0) * _gaussian(float(center), rng.uniform(8.0, 17.0))
     spec += rng.uniform(0.0, 0.01, size=WAVELENGTHS.size).astype(np.float32)
-    return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
+    return _normalize_visible(spec)
 
 
 def make_dataset(seed: int = 260218741) -> SpectralDataset:

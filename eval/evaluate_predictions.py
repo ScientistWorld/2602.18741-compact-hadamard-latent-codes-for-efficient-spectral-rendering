@@ -55,22 +55,31 @@ def score_run(path: Path) -> tuple[str, dict]:
     return method, result
 
 
-def load_reference_experiments(path: Path | None) -> set[str] | None:
+def load_reference_contract(path: Path | None) -> dict[str, set[str]] | None:
     if path is None or not path.exists():
         return None
     payload = json.loads(path.read_text())
-    return set(payload.get("experiments", {}).keys())
+    return {
+        exp_name: set(exp.get("results", {}).keys())
+        for exp_name, exp in payload.get("experiments", {}).items()
+        if isinstance(exp, dict)
+    }
 
 
-def merge_scores(runs: list[Path], allowed_experiments: set[str] | None = None) -> tuple[dict, dict]:
+def merge_scores(runs: list[Path], reference_contract: dict[str, set[str]] | None = None) -> tuple[dict, dict]:
     merged: dict[str, dict] = {"experiments": {}}
     extra: dict[str, dict] = {"experiments": {}}
     for run in runs:
         _, scored = score_run(run)
         for exp, methods in scored.items():
-            target = merged if allowed_experiments is None or exp in allowed_experiments else extra
-            target["experiments"].setdefault(exp, {"results": {}})
-            target["experiments"][exp]["results"].update(methods)
+            for method_name, metrics in methods.items():
+                official = (
+                    reference_contract is None
+                    or (exp in reference_contract and method_name in reference_contract[exp])
+                )
+                target = merged if official else extra
+                target["experiments"].setdefault(exp, {"results": {}})
+                target["experiments"][exp]["results"][method_name] = metrics
     return merged, extra
 
 
@@ -94,8 +103,8 @@ def main() -> None:
         help="Write all experiments to --output instead of filtering to --reference.",
     )
     args = parser.parse_args()
-    allowed = None if args.include_extra else load_reference_experiments(Path(args.reference))
-    scores, extra_scores = merge_scores([Path(p) for p in args.runs], allowed)
+    contract = None if args.include_extra else load_reference_contract(Path(args.reference))
+    scores, extra_scores = merge_scores([Path(p) for p in args.runs], contract)
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(scores, indent=2, sort_keys=True))
