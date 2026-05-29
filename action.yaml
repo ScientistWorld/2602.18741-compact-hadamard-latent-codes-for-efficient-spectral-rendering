@@ -2,8 +2,8 @@
 # Once you set action to 'done', STOP immediately.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: done
+action: pending
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "deterministic index-half split over existing prediction arrays; 18 train metric definitions, 18 test metric definitions; scripts written, scores produced later."
+notes: ""
