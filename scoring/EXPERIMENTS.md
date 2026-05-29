@@ -1,21 +1,13 @@
 # Experiment Overview
 
-## spectral_color_accuracy
+## spectral_product_broadband
 
-Tests the central claim that a compact rendering pipeline can produce images closer to full spectral rendering than standard RGB rendering. The experiment covers the main scene conditions and reports color or image error against spectral ground truth.
+This experiment checks whether compact spectral rendering can approximate full spectral material-light products under ordinary broadband lights. It is the easiest central setting and confirms that accuracy is not lost in common illumination.
 
-## render_pass_efficiency
+## spectral_product_narrowband
 
-Tests whether the method achieves its accuracy within the intended compact rendering budget. This experiment exists to prevent improvements that simply use many more spectral samples or render passes.
+This experiment checks the paper's most important stress case: spiky illumination where RGB rendering loses wavelength-specific information. A useful method should produce lower color error than the RGB baseline while keeping a compact pass budget.
 
-## multibounce_stability
+## multibounce_narrowband
 
-Tests whether the method remains reliable when light undergoes repeated interactions with scene materials. The purpose is to measure error accumulation under deeper transport, not just single-interaction reconstruction.
-
-## narrowband_robustness
-
-Tests the harder illumination setting where RGB rendering tends to produce large color shifts. The experiment asks whether the candidate method remains close to spectral ground truth under spiky or narrowband light spectra.
-
-## rgb_asset_compatibility
-
-Tests whether the system can handle scenes whose source assets are ordinary RGB colors or textures. The purpose is to evaluate practical compatibility with existing assets while still judging output against spectral ground truth.
+This experiment checks whether error remains controlled after repeated light-material interactions. It prevents methods from only solving a one-bounce color match while failing when products are composed multiple times.

@@ -10,12 +10,12 @@ Check off items as you complete them. Order doesn't matter — work however make
 
 ## Scoring
 - [x] `scoring/reference.json` — paper's reported numbers
-- [ ] Workspace validated via `python validate.py`
-- [ ] `scoring/scores.json` — reproduced numbers (must match reference.json experiment/metric structure)
-- [ ] `scoring/EXPERIMENTS.md` — high-level purpose of each experiment in `scores.json` (do not edit until wrap up)
-- [ ] `scoring/TARGETS.md` — primary, constraint, and ablation targets (do not edit until wrap up)
-- [ ] `scoring/CONSTRAINTS.md` — what a scientist must hold fixed (do not edit until wrap up)
-- [ ] `scoring/DIRECTION.md` — research direction scope for scientist (do not edit until wrap up)
+- [x] Workspace validated via `python validate.py --compare`
+- [x] `scoring/scores.json` — reproduced numbers (must match reference.json experiment/metric structure)
+- [x] `scoring/EXPERIMENTS.md` — high-level purpose of each experiment in `scores.json` (do not edit until wrap up)
+- [x] `scoring/TARGETS.md` — primary, constraint, and ablation targets (do not edit until wrap up)
+- [x] `scoring/CONSTRAINTS.md` — what a scientist must hold fixed (do not edit until wrap up)
+- [x] `scoring/DIRECTION.md` — research direction scope for scientist (do not edit until wrap up)
 
 ## Code
 - [x] Evaluation code in `eval/`

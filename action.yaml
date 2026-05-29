@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
-gpus: 1
+action: done
+gpus: 0
 test: false
-milestone: core_claim
-notes: ""
+milestone: core_claim_plus
+notes: "Reproduced the paper's core Hadamard codec claim on broadband, narrowband, and multibounce spectral-product settings; validation passes."
