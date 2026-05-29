@@ -2,4 +2,4 @@ action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Half-split prediction scoring; 48 train metric values and 48 test metric values over 3 experiments x 2 methods x 8 metrics; train/test gaps are small and non-identical, with k6 consistently beating RGB on benefit metrics. Caveat: render_passes and latent_channels remain declared artifact fields."
+notes: "Audited fresh-clone packaging; no external artifacts are required, download.sh is repo-relative, and validation passes."
