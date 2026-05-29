@@ -1,8 +1,9 @@
-# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
+# This iteration writes files only — do NOT submit compute jobs.
+# Once you set action to 'done', STOP immediately.
+# Do NOT sleep, poll, or wait. The system reads this file
+# only after your turn ends.
+action: pending
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Validated packaged reproduction after 400-700 nm masking. Official k=6 scores support the core claim across all scored settings; extra diagnostics reproduce k=9 quality improvements and the RGB-to-latent upsampling secondary claim. Higher milestones require unprovided measured data, Mitsuba scenes, and paper-reported diagnostic targets."
+notes: ""
