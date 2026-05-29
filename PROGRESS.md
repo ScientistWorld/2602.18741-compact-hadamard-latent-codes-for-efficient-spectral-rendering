@@ -10,6 +10,7 @@
 
 ## Results
 
+- Audit on 2026-05-29: the inherited method implementation is identifiable as the paper's actual nonnegative linear Hadamard spectral codec, with the paper's secondary RGB-to-latent upsampler also implemented. The evaluator is independent from `method/` and scores saved artifacts rather than rerunning the algorithm inline.
 - Job `703d0cb3-8c1` ran successfully, so the method reaches `method_runs`.
 - First-run scores did not support the paper's claim: `hadamard_k6` had higher error than `rgb_baseline` on broadband, narrowband, and multibounce tests. This is treated as a reproduction failure for `core_claim`, not as a caveat.
 - Changes for the next run: the procedural spectra now lie on a six-band spectral manifold with narrowband ambiguity, the codec initializes from nonnegative band bases, the RGB baseline reports three spectral samples, and training restores the best validation checkpoint.
@@ -26,6 +27,7 @@
 
 ## Issues
 
+- The latest committed preprocessing change makes the existing `outputs/` and `scoring/scores.json` stale. A CPU job is queued through `action.yaml` to regenerate all artifacts inside the packaged container.
 - The exact measured Munsell/LSPDD data and Mitsuba scenes are not packaged with the paper. This reproduction uses a deterministic procedural spectral benchmark with the same 47-channel structure and product-composition task.
 - The first procedural benchmark was too favorable to the RGB baseline and too unconstrained for the six-channel algebraic codec. It has been revised to preserve the intended spectral-multiplication difficulty.
 
