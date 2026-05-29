@@ -2,4 +2,4 @@ action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Run CPU post-hoc train/test split evaluation over outputs/*/predictions.json and populate scoring/scores_{train,test}.json."
+notes: "Re-run CPU train/test evaluation after filtering official methods and adding spectral_mse for XYZ-only outputs."

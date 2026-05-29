@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from data.spectral_common import (  # noqa: E402
+    color_matching_functions,
     delta_e94,
     make_multibounce_chains,
     make_product_pairs,
@@ -29,11 +30,14 @@ def discover_runs(outputs_dir: Path = Path("outputs")) -> list[Path]:
     return sorted(path.parent for path in outputs_dir.glob("*/predictions.json"))
 
 
-def reference_experiments(path: Path | None) -> set[str] | None:
+def reference_contract(path: Path | None) -> dict[str, set[str]] | None:
     if path is None or not path.exists():
         return None
     payload = json.loads(path.read_text())
-    return set(payload.get("experiments", {}).keys())
+    return {
+        exp_name: set(exp.get("results", {}).keys())
+        for exp_name, exp in payload.get("experiments", {}).items()
+    }
 
 
 def required_methods_from_train(path: Path | None) -> set[str]:
@@ -110,12 +114,19 @@ def summarize_errors(prediction: np.ndarray, target_spectra: np.ndarray, spectra
     return metrics
 
 
-def score_run(path: Path, allowed_experiments: set[str] | None) -> tuple[str, dict]:
+def canonical_spectrum_from_xyz(pred_xyz: np.ndarray) -> np.ndarray:
+    """Deterministic minimum-norm spectral representative for XYZ-only outputs."""
+    cmf = color_matching_functions()
+    spectrum = np.asarray(pred_xyz, dtype=np.float32) @ np.linalg.pinv(cmf.T).astype(np.float32)
+    return np.clip(spectrum, 0.0, None).astype(np.float32)
+
+
+def score_run(path: Path, contract: dict[str, set[str]] | None) -> tuple[str, dict]:
     payload = json.loads((path / "predictions.json").read_text())
     method = payload["method"]
     result: dict[str, dict[str, dict[str, float]]] = {}
     for exp_name, exp in payload["experiments"].items():
-        if allowed_experiments is not None and exp_name not in allowed_experiments:
+        if contract is not None and (exp_name not in contract or method not in contract[exp_name]):
             continue
         if "pred_spectrum" in exp:
             pred_full = np.asarray(exp["pred_spectrum"], dtype=np.float32)
@@ -130,6 +141,8 @@ def score_run(path: Path, allowed_experiments: set[str] | None) -> tuple[str, di
             pred_xyz = pred_full[start:end]
             target = fixed_target(exp_name, len(pred_full))[start:end]
             metrics = summarize_errors(pred_xyz, target, spectral=False)
+            pred_spectrum = canonical_spectrum_from_xyz(pred_xyz)
+            metrics["spectral_mse"] = float(np.mean((pred_spectrum - target) ** 2))
             output_wavelengths = pred_full.shape[-1]
         else:
             raise ValueError(f"{path} lacks pred_spectrum or pred_xyz for {exp_name}")
@@ -141,10 +154,10 @@ def score_run(path: Path, allowed_experiments: set[str] | None) -> tuple[str, di
     return method, result
 
 
-def merge_scores(runs: list[Path], allowed_experiments: set[str] | None) -> dict:
+def merge_scores(runs: list[Path], contract: dict[str, set[str]] | None) -> dict:
     merged: dict[str, dict] = {"experiments": {}}
     for run in runs:
-        _, scored = score_run(run, allowed_experiments)
+        _, scored = score_run(run, contract)
         for exp, methods in scored.items():
             for method_name, metrics in methods.items():
                 merged["experiments"].setdefault(exp, {"results": {}})
@@ -174,8 +187,8 @@ def main() -> None:
     runs = select_runs_for_methods(candidates, required_methods)
     if not runs:
         raise SystemExit("No prediction runs found. Pass output directories or create outputs/*/predictions.json.")
-    allowed = reference_experiments(Path(args.reference))
-    scores = merge_scores(runs, allowed)
+    contract = reference_contract(Path(args.reference))
+    scores = merge_scores(runs, contract)
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(scores, indent=2, sort_keys=True))
