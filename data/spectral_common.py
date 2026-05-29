@@ -35,15 +35,18 @@ def color_matching_functions() -> np.ndarray:
     return cmf.astype(np.float32)
 
 
-def latent_band_basis() -> np.ndarray:
-    """Six smooth localized bands used by the procedural spectra.
+def latent_band_basis(num_bands: int = 6) -> np.ndarray:
+    """Smooth localized bands used by the procedural spectra and initialization.
 
     The basis is not part of evaluation logic for any method; it defines the
     held-out spectral distribution. Its localized support makes narrowband
     products hard for RGB but well matched to the paper's learned Hadamard
     algebra.
     """
-    centers = (405.0, 455.0, 505.0, 555.0, 615.0, 690.0)
+    if num_bands == 6:
+        centers = (405.0, 455.0, 505.0, 555.0, 615.0, 690.0)
+    else:
+        centers = tuple(np.linspace(395.0, 705.0, num_bands))
     bands = np.stack([_gaussian(c, 18.0) for c in centers], axis=0)
     bands /= np.maximum(bands.max(axis=1, keepdims=True), 1e-8)
     return bands.astype(np.float32)

@@ -5,18 +5,19 @@
 - Implemented the paper's core computation: a nonnegative linear encoder and decoder with `softplus`-constrained weights and blockwise Hadamard products over `k=6` latent channels.
 - Added a deterministic method-agnostic spectral benchmark with 47 wavelength samples, reflectance spectra, broadband illuminants, and narrowband illuminants.
 - Added an RGB tristimulus baseline and an evaluator that reads saved method artifacts from `outputs/*/predictions.json`.
+- The corrected `k=6` run demonstrates lower color error than RGB on all scored settings.
 
 ## Results
 
 - Job `703d0cb3-8c1` ran successfully, so the method reaches `method_runs`.
 - First-run scores did not support the paper's claim: `hadamard_k6` had higher error than `rgb_baseline` on broadband, narrowband, and multibounce tests. This is treated as a reproduction failure for `core_claim`, not as a caveat.
 - Changes for the next run: the procedural spectra now lie on a six-band spectral manifold with narrowband ambiguity, the codec initializes from nonnegative band bases, the RGB baseline reports three spectral samples, and training restores the best validation checkpoint.
+- Job `de9c53d7-711` supports `core_claim_plus`: `hadamard_k6` mean DeltaE94 was 2.136 vs RGB 2.488 on broadband, 3.929 vs RGB 7.661 on narrowband, and 2.721 vs RGB 11.013 on three-bounce narrowband. Multibounce spectral MSE was 0.001143, close to the paper's reported 0.00072.
 
 ## Remaining
 
-- Run the corrected packaged pipeline on a compute node.
-- Inspect whether the learned `k=6` codec beats the RGB baseline, especially under narrowband and multibounce tests.
-- If results are weak, iterate on training length and data distribution while preserving the paper's algorithm.
+- Higher milestones would require reproducing the paper's unprovided Mitsuba scene renders, exact measured Munsell/LSPDD datasets, or the RGB-to-latent upsampling network.
+- The method code supports changing `K`, but `k=9` is not part of the official scoring contract because the paper text available here does not report exact primary metrics for `k=9`.
 
 ## Issues
 

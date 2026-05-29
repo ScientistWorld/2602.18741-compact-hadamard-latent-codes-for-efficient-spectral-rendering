@@ -63,8 +63,8 @@ def train(args: argparse.Namespace) -> NonnegativeLinearHadamardCodec:
     ds = make_dataset(seed=args.seed)
     device = torch.device(args.device)
     codec = NonnegativeLinearHadamardCodec(n_wavelengths=WAVELENGTHS.size, k=args.k).to(device)
-    if args.band_init and args.k == 6:
-        codec.reset_from_basis(latent_band_basis())
+    if args.band_init:
+        codec.reset_from_basis(latent_band_basis(args.k))
     opt = torch.optim.Adam(codec.parameters(), lr=args.lr)
     cmf = torch.from_numpy(color_matching_functions()).to(device)
     reflectances_all = ds.reflectance_train.astype(np.float32)
@@ -159,7 +159,7 @@ def main() -> None:
     codec = train(args)
     torch.save({"state_dict": codec.state_dict(), "k": args.k}, out / "codec.pt")
     payload = {
-        "method": "hadamard_k6",
+        "method": f"hadamard_k{args.k}",
         "k": args.k,
         "render_passes": args.k // 3,
         "spectral_samples": int(WAVELENGTHS.size),

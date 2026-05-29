@@ -19,5 +19,5 @@ set -e
 cd /home/user
 
 EVALUATE_AFTER=0 bash scripts/baseline.sh outputs/rgb_baseline
-EVALUATE_AFTER=0 bash scripts/method.sh outputs/hadamard_k6
+EVALUATE_AFTER=0 K=6 bash scripts/method.sh outputs/hadamard_k6
 bash scripts/evaluate.sh outputs/hadamard_k6 outputs/rgb_baseline

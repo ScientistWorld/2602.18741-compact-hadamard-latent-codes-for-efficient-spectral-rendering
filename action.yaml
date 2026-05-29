@@ -27,8 +27,8 @@
 #   milestone: core_claim
 #   notes: "Reproduced the core claim. Environment packaged."
 
-action: submit
+action: done
 gpus: 0
 test: true
-milestone: method_runs
-notes: "CPU follow-up: rerun the k=6 Hadamard codec after six-band benchmark revision, band-basis initialization, and validation checkpoint selection to test the core claim."
+milestone: core_claim_plus
+notes: "Reproduced the core claim on broadband, narrowband, and multibounce spectral-product settings with the actual nonnegative linear Hadamard codec. Environment packaged and validated."

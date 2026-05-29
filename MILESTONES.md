@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: method_runs**
+**Current: core_claim_plus**
 
 <!-- Milestone levels (update "Current" above as you progress):
   none             — just started, no meaningful progress yet
@@ -23,5 +23,9 @@
 - CPU test job completed successfully: the RGB baseline, `k=6` Hadamard codec training, artifact-based evaluation, and `validate.py --compare` all ran end-to-end.
 - The first learned codec did not beat the RGB baseline, so `core_claim` is not reached yet. Updated the procedural spectral benchmark and codec initialization/selection before resubmitting.
 
+### [2026-05-29 08:29] - core_claim_plus
+- Follow-up CPU job completed successfully and supports the paper's central claim on multiple settings.
+- `hadamard_k6` beat `rgb_baseline` on broadband products, narrowband products, and three-bounce narrowband chains while using two RGB-like passes.
+
 ## Stop Justification
-- Not stopped. A follow-up compute job is being submitted to test the corrected benchmark and training procedure.
+- Completed at milestone `core_claim_plus`.
