@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: core_claim_plus**
 
 ## Progress Log
 
@@ -23,3 +23,11 @@
 ### [2026-05-29 09:31] - core_claim
 - Job `3558dcbf-101` ran the hardened evaluator and produced improved RGB-upsampler scores, but failed validation because `reference.json` included a secondary upsampling target without a paper-reported primary metric.
 - Removed that unreported target from the official reference contract while keeping the upsampler artifact as a score-only extension, then resubmitted.
+
+### [2026-05-29 09:43] - core_claim
+- Job `55dc8e03-aa0` reproduced the core scores again but failed validation because `scores.json` still contained the unreferenced upsampling diagnostic.
+- Fixed the evaluator to filter official scores by `reference.json` and write non-reference diagnostics separately to `scoring/extra_scores.json`.
+
+### [2026-05-29 09:47] - core_claim_plus
+- Corrected the score files and locally validated the reference-matched official results.
+- Submitted an evaluation-only container job to verify the fixed evaluator in the packaged environment.

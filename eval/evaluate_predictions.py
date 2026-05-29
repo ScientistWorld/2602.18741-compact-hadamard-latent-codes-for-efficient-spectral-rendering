@@ -55,26 +55,59 @@ def score_run(path: Path) -> tuple[str, dict]:
     return method, result
 
 
-def merge_scores(runs: list[Path]) -> dict:
+def load_reference_experiments(path: Path | None) -> set[str] | None:
+    if path is None or not path.exists():
+        return None
+    payload = json.loads(path.read_text())
+    return set(payload.get("experiments", {}).keys())
+
+
+def merge_scores(runs: list[Path], allowed_experiments: set[str] | None = None) -> tuple[dict, dict]:
     merged: dict[str, dict] = {"experiments": {}}
+    extra: dict[str, dict] = {"experiments": {}}
     for run in runs:
         _, scored = score_run(run)
         for exp, methods in scored.items():
-            merged["experiments"].setdefault(exp, {"results": {}})
-            merged["experiments"][exp]["results"].update(methods)
-    return merged
+            target = merged if allowed_experiments is None or exp in allowed_experiments else extra
+            target["experiments"].setdefault(exp, {"results": {}})
+            target["experiments"][exp]["results"].update(methods)
+    return merged, extra
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("runs", nargs="*", default=["outputs/hadamard_k6", "outputs/rgb_baseline"])
     parser.add_argument("--output", default="scoring/scores.json")
+    parser.add_argument(
+        "--reference",
+        default="scoring/reference.json",
+        help="Reference contract used to filter official scores; missing path disables filtering.",
+    )
+    parser.add_argument(
+        "--extra-output",
+        default="scoring/extra_scores.json",
+        help="Where to write experiments not present in the reference contract.",
+    )
+    parser.add_argument(
+        "--include-extra",
+        action="store_true",
+        help="Write all experiments to --output instead of filtering to --reference.",
+    )
     args = parser.parse_args()
-    scores = merge_scores([Path(p) for p in args.runs])
+    allowed = None if args.include_extra else load_reference_experiments(Path(args.reference))
+    scores, extra_scores = merge_scores([Path(p) for p in args.runs], allowed)
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(scores, indent=2, sort_keys=True))
+    extra_out = Path(args.extra_output)
+    if extra_scores["experiments"]:
+        extra_out.parent.mkdir(parents=True, exist_ok=True)
+        extra_out.write_text(json.dumps(extra_scores, indent=2, sort_keys=True))
+    elif extra_out.exists():
+        extra_out.unlink()
     print(json.dumps(scores, indent=2, sort_keys=True))
+    if extra_scores["experiments"]:
+        print(f"Wrote non-reference diagnostic scores to {extra_out}")
 
 
 if __name__ == "__main__":

@@ -19,25 +19,6 @@
         }
       }
     },
-    "rgb_upsampling_narrowband": {
-      "results": {
-        "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 7.661011695861816,
-          "median_delta_e94": 7.3072357177734375,
-          "output_wavelengths": 3.0,
-          "render_passes": 1.0
-        },
-        "rgb_upsampler_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 6.226588726043701,
-          "median_delta_e94": 5.137421131134033,
-          "output_wavelengths": 47.0,
-          "render_passes": 2.0,
-          "spectral_mse": 0.008354172110557556
-        }
-      }
-    },
     "spectral_product_broadband": {
       "results": {
         "hadamard_k6": {
