@@ -1,5 +1,5 @@
-action: submit
+action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Re-run CPU train/test evaluation after filtering official methods and adding spectral_mse for XYZ-only outputs."
+notes: "Half-split prediction scoring; 48 train metric values and 48 test metric values over 3 experiments x 2 methods x 8 metrics; train/test gaps are small and non-identical, with k6 consistently beating RGB on benefit metrics. Caveat: render_passes and latent_channels remain declared artifact fields."
