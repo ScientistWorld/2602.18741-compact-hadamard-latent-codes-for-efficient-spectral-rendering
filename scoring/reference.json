@@ -2,7 +2,7 @@
   "experiments": {
     "spectral_product_broadband": {
       "description": "Single material-light spectral product under broadband illumination, corresponding to the paper's one-bounce codec proxy and two-pass k=6 rendering claim.",
-      "weight": 0.25,
+      "weight": 0.35,
       "primary_metric": "mean_delta_e94",
       "metrics": {
         "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
@@ -19,7 +19,7 @@
     },
     "spectral_product_narrowband": {
       "description": "Single material-light spectral product under narrowband illumination, the difficult case where the paper reports visible RGB color shifts and improved k=6 latent rendering.",
-      "weight": 0.30,
+      "weight": 0.35,
       "primary_metric": "mean_delta_e94",
       "metrics": {
         "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
@@ -36,7 +36,7 @@
     },
     "multibounce_narrowband": {
       "description": "Three-bounce narrowband multiplicative chain, corresponding to the paper's multibounce stability test and supplemental narrowband MSE report.",
-      "weight": 0.25,
+      "weight": 0.30,
       "primary_metric": "spectral_mse",
       "metrics": {
         "mean_delta_e94": {"higher_is_better": false, "coefficient": 0.7},
@@ -49,23 +49,6 @@
       "results": {
         "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
         "hadamard_k6": {"type": "proposed", "spectral_mse": 0.00072, "render_passes": 2, "latent_channels": 6, "output_wavelengths": 47}
-      }
-    },
-    "rgb_upsampling_narrowband": {
-      "description": "RGB asset conversion under narrowband illumination, corresponding to the paper's secondary RGB-to-latent upsampling claim.",
-      "weight": 0.20,
-      "primary_metric": "mean_delta_e94",
-      "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.4},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05}
-      },
-      "results": {
-        "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
-        "rgb_upsampler_k6": {"type": "proposed", "render_passes": 2, "latent_channels": 6, "output_wavelengths": 47}
       }
     }
   }

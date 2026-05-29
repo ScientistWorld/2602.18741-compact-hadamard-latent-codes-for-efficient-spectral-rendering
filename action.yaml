@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: true
 milestone: core_claim
-notes: "Run hardened evaluation that regenerates fixed targets and train/evaluate the RGB-to-latent upsampler secondary claim."
+notes: "Rerun hardened evaluation after removing the paper-unreported RGB upsampling target from reference.json; upsampler remains generated as a score-only extension."

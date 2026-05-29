@@ -19,3 +19,7 @@
 ### [2026-05-29 09:20] - core_claim
 - Continuing audit found the evaluator trusted candidate-provided target spectra and used an unclear compactness field.
 - Fixed evaluation to regenerate held-out targets independently from `data/`, added the paper's RGB-to-latent upsampler implementation, and submitted a hardened reproduction job before restoring higher milestones.
+
+### [2026-05-29 09:31] - core_claim
+- Job `3558dcbf-101` ran the hardened evaluator and produced improved RGB-upsampler scores, but failed validation because `reference.json` included a secondary upsampling target without a paper-reported primary metric.
+- Removed that unreported target from the official reference contract while keeping the upsampler artifact as a score-only extension, then resubmitted.

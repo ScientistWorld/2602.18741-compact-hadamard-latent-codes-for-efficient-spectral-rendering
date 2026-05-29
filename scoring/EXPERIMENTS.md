@@ -11,7 +11,3 @@ This experiment checks the paper's most important stress case: spiky illuminatio
 ## multibounce_narrowband
 
 This experiment checks whether error remains controlled after repeated light-material interactions. It prevents methods from only solving a one-bounce color match while failing when products are composed multiple times.
-
-## rgb_upsampling_narrowband
-
-This experiment checks whether legacy RGB assets can be lifted into the compact latent rendering pipeline and still beat ordinary RGB rendering under narrowband lights. It evaluates the practical integration claim separately from the native spectral-asset codec.

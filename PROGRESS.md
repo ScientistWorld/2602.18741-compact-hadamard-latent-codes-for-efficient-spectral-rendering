@@ -13,6 +13,7 @@
 - First-run scores did not support the paper's claim: `hadamard_k6` had higher error than `rgb_baseline` on broadband, narrowband, and multibounce tests. This is treated as a reproduction failure for `core_claim`, not as a caveat.
 - Changes for the next run: the procedural spectra now lie on a six-band spectral manifold with narrowband ambiguity, the codec initializes from nonnegative band bases, the RGB baseline reports three spectral samples, and training restores the best validation checkpoint.
 - Job `de9c53d7-711` supports `core_claim_plus`: `hadamard_k6` mean DeltaE94 was 2.136 vs RGB 2.488 on broadband, 3.929 vs RGB 7.661 on narrowband, and 2.721 vs RGB 11.013 on three-bounce narrowband. Multibounce spectral MSE was 0.001143, close to the paper's reported 0.00072.
+- Job `3558dcbf-101` hardened the evaluator and added the paper's RGB-to-latent upsampler. The job failed only because `reference.json` included an upsampling experiment without a paper-reported primary number. The run itself produced a useful secondary score: RGB upsampler mean DeltaE94 6.227 vs RGB baseline 7.661 under narrowband illumination. The official scoring contract keeps only experiments with usable paper reference metrics.
 
 ## Remaining
 
