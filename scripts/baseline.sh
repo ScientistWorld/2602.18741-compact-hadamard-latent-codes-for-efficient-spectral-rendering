@@ -17,4 +17,8 @@ set -e
 
 cd /home/user
 
-# TODO: run baseline
+OUT="${1:-outputs/rgb_baseline}"
+python baseline/rgb_baseline.py --output "$OUT"
+if [ "${EVALUATE_AFTER:-1}" = "1" ]; then
+  bash scripts/evaluate.sh "$OUT"
+fi

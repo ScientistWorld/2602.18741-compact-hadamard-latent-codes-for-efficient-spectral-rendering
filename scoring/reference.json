@@ -1,0 +1,52 @@
+{
+  "experiments": {
+    "spectral_product_broadband": {
+      "description": "Single material-light spectral product under broadband illumination, corresponding to the paper's one-bounce codec proxy and two-pass k=6 rendering claim.",
+      "weight": 0.35,
+      "primary_metric": "mean_delta_e94",
+      "metrics": {
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.4},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
+        "spectral_samples": {"higher_is_better": false, "coefficient": -0.1}
+      },
+      "results": {
+        "rgb_baseline": {"type": "baseline", "render_passes": 1, "spectral_samples": 3},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 2.16, "render_passes": 2, "spectral_samples": 47}
+      }
+    },
+    "spectral_product_narrowband": {
+      "description": "Single material-light spectral product under narrowband illumination, the difficult case where the paper reports visible RGB color shifts and improved k=6 latent rendering.",
+      "weight": 0.35,
+      "primary_metric": "mean_delta_e94",
+      "metrics": {
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.4},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
+        "spectral_samples": {"higher_is_better": false, "coefficient": -0.1}
+      },
+      "results": {
+        "rgb_baseline": {"type": "baseline", "render_passes": 1, "spectral_samples": 3},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 2.16, "render_passes": 2, "spectral_samples": 47}
+      }
+    },
+    "multibounce_narrowband": {
+      "description": "Three-bounce narrowband multiplicative chain, corresponding to the paper's multibounce stability test and supplemental narrowband MSE report.",
+      "weight": 0.30,
+      "primary_metric": "spectral_mse",
+      "metrics": {
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 0.7},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 1.0},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
+        "spectral_samples": {"higher_is_better": false, "coefficient": -0.1}
+      },
+      "results": {
+        "rgb_baseline": {"type": "baseline", "render_passes": 1, "spectral_samples": 3},
+        "hadamard_k6": {"type": "proposed", "spectral_mse": 0.00072, "render_passes": 2, "spectral_samples": 47}
+      }
+    }
+  }
+}

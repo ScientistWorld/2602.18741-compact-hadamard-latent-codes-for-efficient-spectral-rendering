@@ -2,19 +2,23 @@
 
 ## What Works
 
-<!-- What has been successfully reproduced so far. -->
+- Implemented the paper's core computation: a nonnegative linear encoder and decoder with `softplus`-constrained weights and blockwise Hadamard products over `k=6` latent channels.
+- Added a deterministic method-agnostic spectral benchmark with 47 wavelength samples, reflectance spectra, broadband illuminants, and narrowband illuminants.
+- Added an RGB tristimulus baseline and an evaluator that reads saved method artifacts from `outputs/*/predictions.json`.
 
 ## Results
 
-<!-- Reproduced numbers compared to the paper's reported numbers. -->
+- No compute-node results yet in this turn. The submitted job will train the codec, run the RGB baseline, write `scoring/scores.json`, and run `python validate.py --compare`.
 
 ## Remaining
 
-<!-- What still needs to be done to reach higher milestones. -->
+- Run the packaged pipeline on a compute node.
+- Inspect whether the learned `k=6` codec beats the RGB baseline, especially under narrowband and multibounce tests.
+- If results are weak, iterate on training length and data distribution while preserving the paper's algorithm.
 
 ## Issues
 
-<!-- Blockers, bugs, or difficulties encountered. -->
+- The exact measured Munsell/LSPDD data and Mitsuba scenes are not packaged with the paper. This reproduction uses a deterministic procedural spectral benchmark with the same 47-channel structure and product-composition task.
 
 ## Deviations from Paper
 
@@ -35,3 +39,5 @@
      The test: could someone reading your code identify which algorithm from
      the paper you implemented? If not, you replaced the method. -->
 
+- Paper data substitution: the paper used measured Munsell reflectances plus measured/simulated lamp spectra and Mitsuba scenes. This workspace uses deterministic procedural reflectance and illumination spectra because the original datasets and scene assets are not included. The core algorithm, losses, nonnegative linear codec, and blockwise Hadamard product are preserved.
+- Scale substitution: the first submitted job trains one `k=6` codec on a compact procedural benchmark instead of the paper's 700-run hyperparameter grid and full scene rendering. This is the minimum experiment for the core claim.

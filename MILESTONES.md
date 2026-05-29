@@ -15,7 +15,9 @@
 
 ## Progress Log
 
-<!-- Write your progress here -->
+### [2026-05-29 00:00] - none
+- Read the paper and identified the core method: nonnegative linear Hadamard latent spectral codes with exact addition/scaling and approximate multiplicativity.
+- Implemented the first faithful reproduction pipeline and prepared a compute-node job, but no method run has completed yet.
 
 ## Stop Justification
-- Completed at milestone `none`.
+- Not stopped. A compute job is being submitted.

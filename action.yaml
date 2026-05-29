@@ -27,8 +27,8 @@
 #   milestone: core_claim
 #   notes: "Reproduced the core claim. Environment packaged."
 
-action: done
+action: submit
 gpus: 0
-test: false
+test: true
 milestone: none
-notes: "Side-worker documentation pass complete: drafted method-agnostic problem/evaluation and scoring text plus method overview for the Hadamard spectral codec paper."
+notes: "CPU smoke test: install dependencies, run RGB baseline, train the k=6 nonnegative linear Hadamard codec, evaluate saved predictions, and validate scores."

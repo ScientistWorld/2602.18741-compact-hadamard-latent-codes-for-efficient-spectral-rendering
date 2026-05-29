@@ -10,5 +10,10 @@ set -e
 
 cd /home/user
 
-# TODO: run the paper's method
-# TODO: call scripts/evaluate.sh to score
+OUT="${1:-outputs/hadamard_k6}"
+EPOCHS="${EPOCHS:-180}"
+DEVICE="${DEVICE:-cpu}"
+python method/train_codec.py --output "$OUT" --epochs "$EPOCHS" --device "$DEVICE"
+if [ "${EVALUATE_AFTER:-1}" = "1" ]; then
+  bash scripts/evaluate.sh "$OUT" outputs/rgb_baseline
+fi
