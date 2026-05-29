@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
-gpus: 1
+action: submit
+gpus: 0
 test: false
 milestone: core_claim
-notes: ""
+notes: "CPU reproduction rerun after enforcing the paper's 400-700 nm spectral masking and hardening extra-method scoring; runs baseline, k=6 codec, optional k=9 diagnostic, RGB upsampler, evaluator, and validate.py --compare."

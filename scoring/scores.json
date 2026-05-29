@@ -4,16 +4,16 @@
       "results": {
         "hadamard_k6": {
           "latent_channels": 6.0,
-          "mean_delta_e94": 2.721074342727661,
-          "median_delta_e94": 2.4524595737457275,
+          "mean_delta_e94": 3.029766798019409,
+          "median_delta_e94": 2.6969690322875977,
           "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.001143458066508174
+          "spectral_mse": 0.0009678913629613817
         },
         "rgb_baseline": {
           "latent_channels": 3.0,
-          "mean_delta_e94": 11.013172149658203,
-          "median_delta_e94": 10.622241973876953,
+          "mean_delta_e94": 10.939947128295898,
+          "median_delta_e94": 10.572619438171387,
           "output_wavelengths": 3.0,
           "render_passes": 1.0
         }
@@ -23,16 +23,16 @@
       "results": {
         "hadamard_k6": {
           "latent_channels": 6.0,
-          "mean_delta_e94": 2.135815143585205,
-          "median_delta_e94": 2.0824971199035645,
+          "mean_delta_e94": 2.0155298709869385,
+          "median_delta_e94": 1.9986302852630615,
           "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.0024993466213345528
+          "spectral_mse": 0.0015065115876495838
         },
         "rgb_baseline": {
           "latent_channels": 3.0,
-          "mean_delta_e94": 2.4879961013793945,
-          "median_delta_e94": 2.2778823375701904,
+          "mean_delta_e94": 2.5220134258270264,
+          "median_delta_e94": 2.35874080657959,
           "output_wavelengths": 3.0,
           "render_passes": 1.0
         }
@@ -42,16 +42,16 @@
       "results": {
         "hadamard_k6": {
           "latent_channels": 6.0,
-          "mean_delta_e94": 3.9288125038146973,
-          "median_delta_e94": 3.587111711502075,
+          "mean_delta_e94": 4.073190212249756,
+          "median_delta_e94": 3.729036808013916,
           "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.002649742877110839
+          "spectral_mse": 0.0022566167172044516
         },
         "rgb_baseline": {
           "latent_channels": 3.0,
-          "mean_delta_e94": 7.661011695861816,
-          "median_delta_e94": 7.3072357177734375,
+          "mean_delta_e94": 7.624309062957764,
+          "median_delta_e94": 7.2457709312438965,
           "output_wavelengths": 3.0,
           "render_passes": 1.0
         }
