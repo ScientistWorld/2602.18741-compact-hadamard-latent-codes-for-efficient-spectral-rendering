@@ -63,7 +63,7 @@ def main() -> None:
         "method": "rgb_baseline",
         "k": 3,
         "render_passes": 1,
-        "spectral_samples": int(WAVELENGTHS.size),
+        "spectral_samples": 3,
         "experiments": {
             "spectral_product_broadband": product("broadband", args.eval_count),
             "spectral_product_narrowband": product("narrowband", args.eval_count),

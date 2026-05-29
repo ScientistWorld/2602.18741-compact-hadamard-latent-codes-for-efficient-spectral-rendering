@@ -30,5 +30,5 @@
 action: submit
 gpus: 0
 test: true
-milestone: none
-notes: "CPU smoke test: install dependencies, run RGB baseline, train the k=6 nonnegative linear Hadamard codec, evaluate saved predictions, and validate scores."
+milestone: method_runs
+notes: "CPU follow-up: rerun the k=6 Hadamard codec after six-band benchmark revision, band-basis initialization, and validation checkpoint selection to test the core claim."

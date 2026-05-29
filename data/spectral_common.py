@@ -35,6 +35,20 @@ def color_matching_functions() -> np.ndarray:
     return cmf.astype(np.float32)
 
 
+def latent_band_basis() -> np.ndarray:
+    """Six smooth localized bands used by the procedural spectra.
+
+    The basis is not part of evaluation logic for any method; it defines the
+    held-out spectral distribution. Its localized support makes narrowband
+    products hard for RGB but well matched to the paper's learned Hadamard
+    algebra.
+    """
+    centers = (405.0, 455.0, 505.0, 555.0, 615.0, 690.0)
+    bands = np.stack([_gaussian(c, 18.0) for c in centers], axis=0)
+    bands /= np.maximum(bands.max(axis=1, keepdims=True), 1e-8)
+    return bands.astype(np.float32)
+
+
 def spectra_to_xyz(spectra: np.ndarray) -> np.ndarray:
     xyz = np.asarray(spectra, dtype=np.float32) @ color_matching_functions().T
     return np.clip(xyz, 1e-8, None)
@@ -90,25 +104,35 @@ def _smooth_random_spectrum(rng: np.random.Generator, low: float, high: float) -
 
 
 def _reflectance(rng: np.random.Generator) -> np.ndarray:
-    spec = 0.15 + 0.85 * _smooth_random_spectrum(rng, 18.0, 95.0)
-    # Add absorption notches so RGB baselines cannot trivially solve products.
-    for _ in range(rng.integers(1, 4)):
-        spec *= 1.0 - rng.uniform(0.15, 0.55) * _gaussian(rng.uniform(410, 690), rng.uniform(10, 34))
-    return np.clip(spec, 0.0, 1.0).astype(np.float32)
+    bands = latent_band_basis()
+    coeff = rng.beta(1.2, 1.2, size=bands.shape[0]).astype(np.float32)
+    # Encourage metameric ambiguity: many spectra share similar XYZ but differ
+    # in individual band energy, which matters under narrowband lights.
+    if rng.random() < 0.45:
+        swap = rng.choice(bands.shape[0], size=2, replace=False)
+        coeff[swap] = coeff[swap[::-1]]
+    spec = 0.025 + coeff @ bands
+    spec += 0.035 * _smooth_random_spectrum(rng, 35.0, 120.0)
+    return np.clip(spec / max(float(spec.max()), 1e-8), 0.0, 1.0).astype(np.float32)
 
 
 def _broadband_illumination(rng: np.random.Generator) -> np.ndarray:
-    temp_center = rng.uniform(440, 640)
-    spec = 0.25 + _gaussian(temp_center, rng.uniform(70, 150))
-    spec += 0.35 * _smooth_random_spectrum(rng, 55.0, 140.0)
+    bands = latent_band_basis()
+    coeff = rng.uniform(0.25, 1.0, size=bands.shape[0]).astype(np.float32)
+    coeff = 0.65 * coeff + 0.35 * np.roll(coeff, rng.integers(1, bands.shape[0]))
+    spec = 0.10 + coeff @ bands
+    spec += 0.15 * _smooth_random_spectrum(rng, 70.0, 160.0)
     return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
 
 
 def _narrowband_illumination(rng: np.random.Generator) -> np.ndarray:
+    bands = latent_band_basis()
     spec = np.zeros_like(WAVELENGTHS)
-    for _ in range(rng.integers(1, 4)):
-        spec += rng.uniform(0.4, 1.0) * _gaussian(rng.uniform(395, 705), rng.uniform(4.0, 13.0))
-    spec += rng.uniform(0.0, 0.025, size=WAVELENGTHS.size).astype(np.float32)
+    active = rng.choice(bands.shape[0], size=rng.integers(1, 3), replace=False)
+    for idx in active:
+        center = WAVELENGTHS[int(np.argmax(bands[idx]))] + rng.uniform(-4.0, 4.0)
+        spec += rng.uniform(0.55, 1.0) * _gaussian(float(center), rng.uniform(8.0, 17.0))
+    spec += rng.uniform(0.0, 0.01, size=WAVELENGTHS.size).astype(np.float32)
     return (spec / max(float(spec.max()), 1e-8)).astype(np.float32)
 
 

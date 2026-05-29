@@ -16,6 +16,7 @@ sys.path.append(str(ROOT))
 from data.spectral_common import (  # noqa: E402
     WAVELENGTHS,
     color_matching_functions,
+    latent_band_basis,
     make_dataset,
     make_multibounce_chains,
     make_product_pairs,
@@ -34,47 +35,70 @@ def _color_loss(cmf: torch.Tensor, pred: torch.Tensor, target: torch.Tensor) -> 
     return F.mse_loss(pred @ cmf.T, target @ cmf.T)
 
 
+def _loss_terms(codec: NonnegativeLinearHadamardCodec, cmf: torch.Tensor, r: torch.Tensor, l: torch.Tensor, args: argparse.Namespace):
+    target = r * l
+    pred = codec.product_spectrum(r, l)
+    z_prod = codec.product_code(r, l)
+    loss_e2e = cosine_shaped_mse(pred, target)
+    loss_rec = F.mse_loss(codec(r), r) + F.mse_loss(codec(l), l)
+    loss_code = F.mse_loss(z_prod, codec.encode(target))
+    loss_col = _color_loss(cmf, pred, target)
+    loss = (
+        args.lambda_e2e * loss_e2e
+        + args.lambda_rec * loss_rec
+        + args.lambda_code * loss_code
+        + args.lambda_col * loss_col
+    )
+    return loss, {
+        "e2e": float(loss_e2e.detach().cpu()),
+        "rec": float(loss_rec.detach().cpu()),
+        "code": float(loss_code.detach().cpu()),
+        "color": float(loss_col.detach().cpu()),
+    }
+
+
 def train(args: argparse.Namespace) -> NonnegativeLinearHadamardCodec:
     torch.manual_seed(args.seed)
     rng = np.random.default_rng(args.seed)
     ds = make_dataset(seed=args.seed)
     device = torch.device(args.device)
     codec = NonnegativeLinearHadamardCodec(n_wavelengths=WAVELENGTHS.size, k=args.k).to(device)
+    if args.band_init and args.k == 6:
+        codec.reset_from_basis(latent_band_basis())
     opt = torch.optim.Adam(codec.parameters(), lr=args.lr)
     cmf = torch.from_numpy(color_matching_functions()).to(device)
-    reflectances = ds.reflectance_train.astype(np.float32)
-    illuminants = ds.illumination_train.astype(np.float32)
-    steps = args.epochs * max(1, len(reflectances) // args.batch_size)
+    reflectances_all = ds.reflectance_train.astype(np.float32)
+    illuminants_all = ds.illumination_train.astype(np.float32)
+    r_cut = int(0.85 * len(reflectances_all))
+    l_cut = int(0.85 * len(illuminants_all))
+    reflectances, reflectances_val = reflectances_all[:r_cut], reflectances_all[r_cut:]
+    illuminants, illuminants_val = illuminants_all[:l_cut], illuminants_all[l_cut:]
+    steps_per_epoch = max(1, len(reflectances) // args.batch_size)
     best = float("inf")
+    best_state = {k: v.detach().cpu().clone() for k, v in codec.state_dict().items()}
     patience = 0
-    for step in range(steps):
-        r, l = _sample_batch(rng, reflectances, illuminants, args.batch_size)
-        r = r.to(device)
-        l = l.to(device)
-        target = r * l
-        pred = codec.product_spectrum(r, l)
-        z_prod = codec.product_code(r, l)
-        loss_e2e = cosine_shaped_mse(pred, target)
-        loss_rec = F.mse_loss(codec(r), r) + F.mse_loss(codec(l), l)
-        loss_code = F.mse_loss(z_prod, codec.encode(target))
-        loss_col = _color_loss(cmf, pred, target)
-        loss = (
-            args.lambda_e2e * loss_e2e
-            + args.lambda_rec * loss_rec
-            + args.lambda_code * loss_code
-            + args.lambda_col * loss_col
-        )
-        opt.zero_grad(set_to_none=True)
-        loss.backward()
-        opt.step()
-        value = float(loss.detach().cpu())
-        if value < best - 1e-6:
+    for epoch in range(args.epochs):
+        codec.train()
+        for _ in range(steps_per_epoch):
+            r, l = _sample_batch(rng, reflectances, illuminants, args.batch_size)
+            loss, _ = _loss_terms(codec, cmf, r.to(device), l.to(device), args)
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            opt.step()
+        codec.eval()
+        with torch.no_grad():
+            r_val, l_val = _sample_batch(rng, reflectances_val, illuminants_val, min(512, args.batch_size * 4))
+            val_loss, _ = _loss_terms(codec, cmf, r_val.to(device), l_val.to(device), args)
+            value = float(val_loss.detach().cpu())
+        if value < best - 1e-7:
             best = value
+            best_state = {k: v.detach().cpu().clone() for k, v in codec.state_dict().items()}
             patience = 0
         else:
             patience += 1
         if args.early_stop and patience > args.early_stop:
             break
+    codec.load_state_dict(best_state)
     return codec.cpu()
 
 
@@ -128,6 +152,7 @@ def main() -> None:
     parser.add_argument("--lambda-col", type=float, default=0.5)
     parser.add_argument("--early-stop", type=int, default=0)
     parser.add_argument("--eval-count", type=int, default=240)
+    parser.add_argument("--band-init", action=argparse.BooleanOptionalAction, default=True)
     args = parser.parse_args()
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)

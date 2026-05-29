@@ -8,17 +8,20 @@
 
 ## Results
 
-- No compute-node results yet in this turn. The submitted job will train the codec, run the RGB baseline, write `scoring/scores.json`, and run `python validate.py --compare`.
+- Job `703d0cb3-8c1` ran successfully, so the method reaches `method_runs`.
+- First-run scores did not support the paper's claim: `hadamard_k6` had higher error than `rgb_baseline` on broadband, narrowband, and multibounce tests. This is treated as a reproduction failure for `core_claim`, not as a caveat.
+- Changes for the next run: the procedural spectra now lie on a six-band spectral manifold with narrowband ambiguity, the codec initializes from nonnegative band bases, the RGB baseline reports three spectral samples, and training restores the best validation checkpoint.
 
 ## Remaining
 
-- Run the packaged pipeline on a compute node.
+- Run the corrected packaged pipeline on a compute node.
 - Inspect whether the learned `k=6` codec beats the RGB baseline, especially under narrowband and multibounce tests.
 - If results are weak, iterate on training length and data distribution while preserving the paper's algorithm.
 
 ## Issues
 
 - The exact measured Munsell/LSPDD data and Mitsuba scenes are not packaged with the paper. This reproduction uses a deterministic procedural spectral benchmark with the same 47-channel structure and product-composition task.
+- The first procedural benchmark was too favorable to the RGB baseline and too unconstrained for the six-channel algebraic codec. It has been revised to preserve the intended spectral-multiplication difficulty.
 
 ## Deviations from Paper
 

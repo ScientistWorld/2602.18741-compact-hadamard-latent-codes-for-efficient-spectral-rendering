@@ -11,9 +11,9 @@ set -e
 cd /home/user
 
 OUT="${1:-outputs/hadamard_k6}"
-EPOCHS="${EPOCHS:-180}"
+EPOCHS="${EPOCHS:-600}"
 DEVICE="${DEVICE:-cpu}"
-python method/train_codec.py --output "$OUT" --epochs "$EPOCHS" --device "$DEVICE"
+python method/train_codec.py --output "$OUT" --epochs "$EPOCHS" --device "$DEVICE" --early-stop "${EARLY_STOP:-120}"
 if [ "${EVALUATE_AFTER:-1}" = "1" ]; then
   bash scripts/evaluate.sh "$OUT" outputs/rgb_baseline
 fi

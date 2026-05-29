@@ -18,6 +18,17 @@ class NonnegativeLinearHadamardCodec(nn.Module):
         self.raw_encoder = nn.Parameter(torch.randn(k, n_wavelengths) * 0.04 - 0.25)
         self.raw_decoder = nn.Parameter(torch.randn(n_wavelengths, k) * 0.04 - 0.25)
 
+    def reset_from_basis(self, basis) -> None:
+        """Initialize weights from nonnegative spectral bands."""
+        bands = torch.as_tensor(basis, dtype=self.raw_encoder.dtype, device=self.raw_encoder.device)
+        if bands.shape != (self.k, self.n_wavelengths):
+            raise ValueError(f"basis must have shape {(self.k, self.n_wavelengths)}, got {tuple(bands.shape)}")
+        decoder = bands.T.clamp_min(1e-6)
+        encoder = (bands / bands.square().sum(dim=1, keepdim=True).clamp_min(1e-6)).clamp_min(1e-6)
+        with torch.no_grad():
+            self.raw_encoder.copy_(softplus_inverse(encoder, self.beta))
+            self.raw_decoder.copy_(softplus_inverse(decoder, self.beta))
+
     @property
     def encoder_weight(self) -> torch.Tensor:
         return F.softplus(self.raw_encoder, beta=self.beta)
@@ -48,3 +59,8 @@ def cosine_shaped_mse(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     mse = F.mse_loss(pred, target)
     cos = F.cosine_similarity(pred, target, dim=-1, eps=1e-8).mean()
     return mse * (2.0 - cos)
+
+
+def softplus_inverse(value: torch.Tensor, beta: float) -> torch.Tensor:
+    x = (value * beta).clamp_min(1e-6)
+    return torch.log(torch.expm1(x)) / beta
