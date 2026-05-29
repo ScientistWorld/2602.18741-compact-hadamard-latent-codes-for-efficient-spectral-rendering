@@ -17,7 +17,9 @@
 
 set -e
 
-cd /home/user
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 
 mkdir -p data/downloads
 echo "No external downloads are required. The spectral benchmark is generated deterministically by data/spectral_common.py."
