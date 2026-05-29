@@ -162,7 +162,7 @@ def main() -> None:
         "method": f"hadamard_k{args.k}",
         "k": args.k,
         "render_passes": args.k // 3,
-        "spectral_samples": int(WAVELENGTHS.size),
+        "output_wavelengths": int(WAVELENGTHS.size),
         "experiments": {
             "spectral_product_broadband": _predict_product(codec, "broadband", args.eval_count),
             "spectral_product_narrowband": _predict_product(codec, "narrowband", args.eval_count),

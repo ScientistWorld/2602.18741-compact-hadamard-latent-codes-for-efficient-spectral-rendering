@@ -1,6 +1,6 @@
 # Reproduction Milestones
 
-**Current: core_claim_plus**
+**Current: core_claim**
 
 ## Progress Log
 
@@ -15,3 +15,7 @@
 ### [2026-05-29 08:49] - core_claim_plus
 - Extended the reproduced result to broadband product and three-bounce narrowband chain settings.
 - Current scores: broadband mean DeltaE94 2.136 vs RGB 2.488, narrowband 3.929 vs RGB 7.661, multibounce 2.721 vs RGB 11.013.
+
+### [2026-05-29 09:20] - core_claim
+- Continuing audit found the evaluator trusted candidate-provided target spectra and used an unclear compactness field.
+- Fixed evaluation to regenerate held-out targets independently from `data/`, added the paper's RGB-to-latent upsampler implementation, and submitted a hardened reproduction job before restoring higher milestones.

@@ -63,11 +63,12 @@ def main() -> None:
         "method": "rgb_baseline",
         "k": 3,
         "render_passes": 1,
-        "spectral_samples": 3,
+        "output_wavelengths": 3,
         "experiments": {
             "spectral_product_broadband": product("broadband", args.eval_count),
             "spectral_product_narrowband": product("narrowband", args.eval_count),
             "multibounce_narrowband": multibounce("narrowband", max(80, args.eval_count // 2)),
+            "rgb_upsampling_narrowband": product("narrowband", args.eval_count),
         },
     }
     (out / "predictions.json").write_text(json.dumps(payload))

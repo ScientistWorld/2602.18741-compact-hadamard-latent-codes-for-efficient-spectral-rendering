@@ -45,3 +45,4 @@
 
 - Paper data substitution: the paper used measured Munsell reflectances plus measured/simulated lamp spectra and Mitsuba scenes. This workspace uses deterministic procedural reflectance and illumination spectra because the original datasets and scene assets are not included. The core algorithm, losses, nonnegative linear codec, and blockwise Hadamard product are preserved.
 - Scale substitution: the first submitted job trains one `k=6` codec on a compact procedural benchmark instead of the paper's 700-run hyperparameter grid and full scene rendering. This is the minimum experiment for the core claim.
+- Evaluation hardening: continuing audit found that the evaluator trusted candidate-provided target spectra. The evaluator now regenerates fixed held-out targets from `data/` for every registered experiment and ignores any `target_spectrum` fields included in method artifacts for preview/debugging.

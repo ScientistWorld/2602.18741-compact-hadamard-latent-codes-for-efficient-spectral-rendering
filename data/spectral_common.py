@@ -38,10 +38,9 @@ def color_matching_functions() -> np.ndarray:
 def latent_band_basis(num_bands: int = 6) -> np.ndarray:
     """Smooth localized bands used by the procedural spectra and initialization.
 
-    The basis is not part of evaluation logic for any method; it defines the
-    held-out spectral distribution. Its localized support makes narrowband
-    products hard for RGB but well matched to the paper's learned Hadamard
-    algebra.
+    The basis is not part of any candidate method; it defines the fixed held-out
+    spectral distribution. Its localized support creates narrowband ambiguity
+    that ordinary tristimulus multiplication cannot recover.
     """
     if num_bands == 6:
         centers = (405.0, 455.0, 505.0, 555.0, 615.0, 690.0)
