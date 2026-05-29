@@ -3,51 +3,76 @@
     "multibounce_narrowband": {
       "results": {
         "hadamard_k6": {
+          "latent_channels": 6.0,
           "mean_delta_e94": 2.721074342727661,
           "median_delta_e94": 2.4524595737457275,
+          "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.001143458066508174,
-          "spectral_samples": 47.0
+          "spectral_mse": 0.001143458066508174
         },
         "rgb_baseline": {
+          "latent_channels": 3.0,
           "mean_delta_e94": 11.013172149658203,
           "median_delta_e94": 10.622241973876953,
-          "render_passes": 1.0,
-          "spectral_samples": 3.0
+          "output_wavelengths": 3.0,
+          "render_passes": 1.0
+        }
+      }
+    },
+    "rgb_upsampling_narrowband": {
+      "results": {
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 7.661011695861816,
+          "median_delta_e94": 7.3072357177734375,
+          "output_wavelengths": 3.0,
+          "render_passes": 1.0
+        },
+        "rgb_upsampler_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 6.226588726043701,
+          "median_delta_e94": 5.137421131134033,
+          "output_wavelengths": 47.0,
+          "render_passes": 2.0,
+          "spectral_mse": 0.008354172110557556
         }
       }
     },
     "spectral_product_broadband": {
       "results": {
         "hadamard_k6": {
+          "latent_channels": 6.0,
           "mean_delta_e94": 2.135815143585205,
           "median_delta_e94": 2.0824971199035645,
+          "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.0024993466213345528,
-          "spectral_samples": 47.0
+          "spectral_mse": 0.0024993466213345528
         },
         "rgb_baseline": {
+          "latent_channels": 3.0,
           "mean_delta_e94": 2.4879961013793945,
           "median_delta_e94": 2.2778823375701904,
-          "render_passes": 1.0,
-          "spectral_samples": 3.0
+          "output_wavelengths": 3.0,
+          "render_passes": 1.0
         }
       }
     },
     "spectral_product_narrowband": {
       "results": {
         "hadamard_k6": {
+          "latent_channels": 6.0,
           "mean_delta_e94": 3.9288125038146973,
           "median_delta_e94": 3.587111711502075,
+          "output_wavelengths": 47.0,
           "render_passes": 2.0,
-          "spectral_mse": 0.002649742877110839,
-          "spectral_samples": 47.0
+          "spectral_mse": 0.002649742877110839
         },
         "rgb_baseline": {
+          "latent_channels": 3.0,
           "mean_delta_e94": 7.661011695861816,
           "median_delta_e94": 7.3072357177734375,
-          "render_passes": 1.0,
-          "spectral_samples": 3.0
+          "output_wavelengths": 3.0,
+          "render_passes": 1.0
         }
       }
     }
