@@ -6,7 +6,8 @@
 - Added a deterministic method-agnostic spectral benchmark with 47 wavelength samples, reflectance spectra, broadband illuminants, and narrowband illuminants.
 - Added an RGB tristimulus baseline and an evaluator that reads saved method artifacts from `outputs/*/predictions.json`.
 - The corrected `k=6` run demonstrates lower color error than RGB on all scored settings.
-- Current iteration updates the substitute spectra to zero energy outside 400-700 nm, matching the paper's preprocessing, and routes optional non-reference methods such as `hadamard_k9` into `scoring/extra_scores.json` instead of the official score contract.
+- The substitute spectra zero energy outside 400-700 nm, matching the paper's preprocessing, and optional non-reference methods such as `hadamard_k9` are routed into `scoring/extra_scores.json` instead of the official score contract.
+- The packaged reproduction now also runs the paper's secondary RGB-to-latent upsampling network as a diagnostic.
 
 ## Results
 
@@ -18,16 +19,15 @@
 - Job `3558dcbf-101` hardened the evaluator and added the paper's RGB-to-latent upsampler. The job failed only because `reference.json` included an upsampling experiment without a paper-reported primary number. The run itself produced a useful secondary score: RGB upsampler mean DeltaE94 6.227 vs RGB baseline 7.661 under narrowband illumination. The official scoring contract keeps only experiments with usable paper reference metrics.
 - Job `55dc8e03-aa0` reran the hardened pipeline and reproduced the same core scores, but `validate.py --compare` rejected `scores.json` because it still included the paper-unreported `rgb_upsampling_narrowband` diagnostic. The evaluator now filters official scores to experiments present in `scoring/reference.json` and writes any extra diagnostics to `scoring/extra_scores.json`; local validation of the corrected score files passes.
 - Job `12fb69b9-029` verified the corrected evaluator inside the packaged container. Official `scores.json` now contains only reference-matched experiments, `extra_scores.json` contains the RGB upsampling diagnostic, and `validate.py --compare` reports all checks passed.
+- Job `1269b0bc-79d` reran the packaged pipeline after the 400-700 nm masking change. Official `k=6` scores are broadband mean DeltaE94 2.016 vs RGB 2.522, narrowband 4.073 vs RGB 7.624, and three-bounce narrowband 3.030 vs RGB 10.940 with spectral MSE 9.68e-4. The `k=9` diagnostic improves the three corresponding DeltaE94 values to 1.409, 3.089, and 2.323 at three render passes. The RGB-to-latent upsampler reaches narrowband DeltaE94 6.334 vs RGB 7.624. `validate.py --compare` passes in the container.
 
 ## Remaining
 
-- Rerun the packaged reproduction after the 400-700 nm masking change and refresh `scoring/scores.json`.
 - Higher milestones would require reproducing the paper's unprovided Mitsuba scene renders, exact measured Munsell/LSPDD datasets, and paper-reported quantitative targets for the RGB-to-latent upsampling network.
-- The method code supports changing `K`, but `k=9` is not part of the official scoring contract because the paper text available here does not report exact primary metrics for `k=9`.
+- The method code supports changing `K`, and `k=9` is exercised as a diagnostic, but it is not part of the official scoring contract because the paper text available here does not report exact primary metrics for `k=9`.
 
 ## Issues
 
-- The latest committed preprocessing change makes the existing `outputs/` and `scoring/scores.json` stale. A CPU job is queued through `action.yaml` to regenerate all artifacts inside the packaged container.
 - The exact measured Munsell/LSPDD data and Mitsuba scenes are not packaged with the paper. This reproduction uses a deterministic procedural spectral benchmark with the same 47-channel structure and product-composition task.
 - The first procedural benchmark was too favorable to the RGB baseline and too unconstrained for the six-channel algebraic codec. It has been revised to preserve the intended spectral-multiplication difficulty.
 

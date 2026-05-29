@@ -11,3 +11,7 @@ This experiment checks the paper's most important stress case: spiky illuminatio
 ## multibounce_narrowband
 
 This experiment checks whether error remains controlled after repeated light-material interactions. It prevents methods from only solving a one-bounce color match while failing when products are composed multiple times.
+
+## Diagnostics Outside Official Scores
+
+`scoring/extra_scores.json` records additional runs that are useful for auditing but are not part of the official score contract because the paper text available here does not provide matching reference values. These include the higher-channel compact spectral product setting and the RGB-to-spectral upsampling stress case.
