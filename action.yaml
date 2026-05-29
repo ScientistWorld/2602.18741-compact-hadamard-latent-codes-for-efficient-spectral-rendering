@@ -27,8 +27,8 @@
 #   milestone: core_claim
 #   notes: "Reproduced the core claim. Environment packaged."
 
-action: pending
-gpus: 1
+action: done
+gpus: 0
 test: false
 milestone: none
-notes: ""
+notes: "Side-worker documentation pass complete: drafted method-agnostic problem/evaluation and scoring text plus method overview for the Hadamard spectral codec paper."

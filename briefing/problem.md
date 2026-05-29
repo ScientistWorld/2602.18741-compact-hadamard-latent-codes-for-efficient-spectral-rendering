@@ -1,17 +1,13 @@
 # Problem Definition
 
-What problem does this paper address? Write this so that someone with no knowledge of the paper can understand what needs to be solved and how success is measured.
-
-Do NOT describe the paper's method or solution here — only the problem itself. Think about if a future scientist agent try to solve this problem from scratch without knowing what approach the paper took. If you leak the solution, you compromise the benchmark.
-
 ## Research Question
 
-<!-- What problem or challenge does this paper tackle? What gap in existing work does it address? -->
+Can a renderer produce images that match full spectral rendering much more closely than standard RGB rendering while using only a small number of RGB-like render passes? The challenge is to preserve wavelength-dependent color behavior under varied reflectances, broadband lights, narrowband lights, and repeated material-light interactions without paying the cost of rendering dozens of wavelength samples per shading operation.
 
 ## Why It Matters
 
-<!-- Why is this problem important? What would a good solution enable? Make it short -->
+Spectral rendering captures effects that RGB rendering cannot reliably reproduce, including metamerism and large color shifts under unusual illumination. A practical solution would make these benefits accessible in production-oriented or interactive rendering pipelines that are built around RGB render passes.
 
 ## Success Criteria
 
-<!-- What would a successful solution look like? What properties should it have? This is about the goal, not the paper's specific approach. Make it short -->
+A successful solution should produce rendered colors close to 47-channel spectral ground truth, outperform ordinary RGB rendering on difficult illumination cases, remain stable as light interacts with multiple materials, and require far fewer render passes than full spectral rendering. It should also support scenes that start from either spectral assets or legacy RGB assets.

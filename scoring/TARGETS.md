@@ -1,50 +1,31 @@
 # Evaluation Targets
 
-<!-- Do not edit this unless you decide to stop -->
+## Primary: spectral_color_accuracy
 
-<!--
-Describe what a scientist could optimize and how to measure it.
+Tests whether rendered images match full spectral ground truth more closely than ordinary RGB rendering across the main scene and illumination settings.
+- **Metric**: mean_delta_e94 or image_mse (lower is better)
+- **How to run**: Render the fixed evaluation scenes with the candidate method, full spectral ground truth, and RGB baseline; compare candidate and baseline errors against the spectral ground truth.
 
-If a paper claims "we get X without sacrificing Y." Your targets must
-capture BOTH sides. Without constraint targets, a scientist can trivially
-"improve" by breaking the property the paper was designed to satisfy.
+## Constraint: render_pass_efficiency
 
-Three kinds of targets:
+Tests whether accuracy is achieved with a compact RGB-renderer-compatible budget rather than by falling back to many spectral samples.
+- **Metric**: render_passes or spectral_sample_equivalent_passes (lower is better, subject to accuracy targets)
+- **How to run**: Count the number of RGB-equivalent render passes or wavelength-sample passes required by the candidate method for the same output image.
 
-  PRIMARY    — the main thing the paper optimizes (accuracy, PSNR, etc.)
-  CONSTRAINT — what the paper must maintain (security, fairness, param count,
-               baseline comparison). Constraint metrics guard against cheating:
-               a scientist who ignores the constraint should score WORSE.
-  ABLATION   — what breaks when the key idea is removed (wrong-key test,
-               no-module test). Proves the method actually does something. 
-               This can be ignored if truly not important.
+## Constraint: multibounce_stability
 
-For each target, write:
-- What the experiment tests (one sentence)
-- The primary metric and direction (higher/lower is better)
-- How to run evaluation
+Tests whether error remains controlled when spectral quantities undergo repeated light-material interactions.
+- **Metric**: bounce_error_growth (lower is better)
+- **How to run**: Evaluate one-, two-, and three-bounce held-out spectral chains and compare each output to the full spectral chain; summarize both absolute error and growth between bounces.
 
-Every target here MUST appear in both reference.json and scores.json.
-Do not list targets you cannot measure — phantom targets are worse than
-missing targets.
+## Constraint: narrowband_robustness
 
-Example for a steganography paper:
+Tests whether the method remains accurate under spiky or narrowband illumination where RGB rendering is known to fail.
+- **Metric**: narrowband_mean_mse or narrowband_delta_e94 (lower is better)
+- **How to run**: Render the fixed narrowband-light scene and compare against 47-channel spectral ground truth using the same camera, materials, and sampling settings as other methods.
 
-## Primary: reconstruction_quality
-Cover and hidden scene PSNR on Blender Synthetic.
-- **Metric**: psnr (higher is better)
+## Secondary: rgb_asset_compatibility
 
-## Constraint: key_security
-Wrong-key rendering must produce incoherent output.
-- **Metric**: wrong_key_psnr (lower is better — high means security is broken)
-
-## Ablation: vs_standalone_baseline
-Cover quality should match standalone model (no hidden scene embedded).
-- **Metric**: psnr_gap (lower is better — large gap means hiding costs quality)
-
-Delete this comment block and fill in your actual targets below.
--->
-
-<!-- This is high-level. IT IS ABOUT CONCEPT, NOT NUMBERS. DO NOT INCLUDE ANY ACTUAL VALUES FROM THE PAPER OR YOUR EXPERIMENTS HERE. -->
-
-<!-- This should EXACTLY corresponds to the structure in your scores.json. -->
+Tests whether scenes that start from RGB textures or colors can still benefit from the spectral evaluation pipeline.
+- **Metric**: rgb_asset_delta_e or rgb_asset_image_mse (lower is better)
+- **How to run**: Evaluate the fixed RGB-asset scenes against their spectral ground truth counterparts and compare to ordinary RGB rendering.
