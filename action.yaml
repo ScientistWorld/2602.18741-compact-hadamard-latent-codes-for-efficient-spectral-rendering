@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
+action: done
 gpus: 0
 test: true
 milestone: core_claim_plus
-notes: "Evaluation-only validation after filtering non-reference RGB upsampling diagnostics out of scoring/scores.json and into scoring/extra_scores.json."
+notes: "Core claim plus reproduced and validated in-container. Official scores cover broadband product, narrowband product, and multibounce narrowband; RGB upsampling diagnostic is preserved separately."

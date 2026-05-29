@@ -15,10 +15,11 @@
 - Job `de9c53d7-711` supports `core_claim_plus`: `hadamard_k6` mean DeltaE94 was 2.136 vs RGB 2.488 on broadband, 3.929 vs RGB 7.661 on narrowband, and 2.721 vs RGB 11.013 on three-bounce narrowband. Multibounce spectral MSE was 0.001143, close to the paper's reported 0.00072.
 - Job `3558dcbf-101` hardened the evaluator and added the paper's RGB-to-latent upsampler. The job failed only because `reference.json` included an upsampling experiment without a paper-reported primary number. The run itself produced a useful secondary score: RGB upsampler mean DeltaE94 6.227 vs RGB baseline 7.661 under narrowband illumination. The official scoring contract keeps only experiments with usable paper reference metrics.
 - Job `55dc8e03-aa0` reran the hardened pipeline and reproduced the same core scores, but `validate.py --compare` rejected `scores.json` because it still included the paper-unreported `rgb_upsampling_narrowband` diagnostic. The evaluator now filters official scores to experiments present in `scoring/reference.json` and writes any extra diagnostics to `scoring/extra_scores.json`; local validation of the corrected score files passes.
+- Job `12fb69b9-029` verified the corrected evaluator inside the packaged container. Official `scores.json` now contains only reference-matched experiments, `extra_scores.json` contains the RGB upsampling diagnostic, and `validate.py --compare` reports all checks passed.
 
 ## Remaining
 
-- Higher milestones would require reproducing the paper's unprovided Mitsuba scene renders, exact measured Munsell/LSPDD datasets, or the RGB-to-latent upsampling network.
+- Higher milestones would require reproducing the paper's unprovided Mitsuba scene renders, exact measured Munsell/LSPDD datasets, and paper-reported quantitative targets for the RGB-to-latent upsampling network.
 - The method code supports changing `K`, but `k=9` is not part of the official scoring contract because the paper text available here does not report exact primary metrics for `k=9`.
 
 ## Issues

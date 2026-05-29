@@ -31,3 +31,7 @@
 ### [2026-05-29 09:47] - core_claim_plus
 - Corrected the score files and locally validated the reference-matched official results.
 - Submitted an evaluation-only container job to verify the fixed evaluator in the packaged environment.
+
+### [2026-05-29 10:02] - core_claim_plus
+- Job `12fb69b9-029` passed in the container with official scores filtered to the three reference-matched experiments.
+- The auxiliary RGB upsampling result is preserved in `scoring/extra_scores.json` without breaking automated comparison.
