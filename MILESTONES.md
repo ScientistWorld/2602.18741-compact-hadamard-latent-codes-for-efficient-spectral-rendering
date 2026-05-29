@@ -18,4 +18,4 @@
 - Secondary diagnostics also ran: `k=9` improved all three product settings at a three-pass cost, and the RGB-to-latent upsampler improved narrowband DeltaE94 to 6.334 vs RGB 7.624. These diagnostics are stored in `scoring/extra_scores.json` because the paper text available here does not provide exact reference targets for them.
 
 ## Stop Justification
-- Stopping at `secondary_claims`. The reusable environment is packaged and validated; pushing to majority/full would require unprovided measured Munsell/LSPDD assets, Mitsuba scenes, and paper-reported quantitative targets for the secondary diagnostics.
+- Completed at milestone `secondary_claims`.
