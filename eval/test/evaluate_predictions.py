@@ -13,10 +13,11 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(ROOT))
 
 from data.spectral_common import (  # noqa: E402
+    delta_e94,
     make_multibounce_chains,
     make_product_pairs,
-    summarize_color_error,
-    summarize_xyz_error,
+    spectra_to_xyz,
+    xyz_to_lab,
 )
 
 SLICE = "test"
@@ -89,6 +90,26 @@ def slice_bounds(count: int) -> tuple[int, int]:
     return count // 2, count
 
 
+def summarize_errors(prediction: np.ndarray, target_spectra: np.ndarray, spectral: bool) -> dict[str, float]:
+    if prediction.ndim != 2:
+        raise ValueError(f"Expected 2D predictions, got shape {prediction.shape}")
+    if len(prediction) != len(target_spectra):
+        raise ValueError(f"Prediction/target count mismatch: {len(prediction)} vs {len(target_spectra)}")
+    pred_xyz = spectra_to_xyz(prediction) if spectral else prediction
+    target_xyz = spectra_to_xyz(target_spectra)
+    de = delta_e94(xyz_to_lab(pred_xyz), xyz_to_lab(target_xyz))
+    tail_start = max(0, int(np.floor(0.9 * len(de))))
+    metrics = {
+        "mean_delta_e94": float(np.mean(de)),
+        "median_delta_e94": float(np.median(de)),
+        "p95_delta_e94": float(np.percentile(de, 95)),
+        "worst_decile_delta_e94": float(np.mean(np.sort(de)[tail_start:])),
+    }
+    if spectral:
+        metrics["spectral_mse"] = float(np.mean((prediction - target_spectra) ** 2))
+    return metrics
+
+
 def score_run(path: Path, allowed_experiments: set[str] | None) -> tuple[str, dict]:
     payload = json.loads((path / "predictions.json").read_text())
     method = payload["method"]
@@ -101,20 +122,20 @@ def score_run(path: Path, allowed_experiments: set[str] | None) -> tuple[str, di
             start, end = slice_bounds(len(pred_full))
             pred = pred_full[start:end]
             target = fixed_target(exp_name, len(pred_full))[start:end]
-            metrics = summarize_color_error(pred, target)
+            metrics = summarize_errors(pred, target, spectral=True)
+            output_wavelengths = pred_full.shape[-1]
         elif "pred_xyz" in exp:
             pred_full = np.asarray(exp["pred_xyz"], dtype=np.float32)
             start, end = slice_bounds(len(pred_full))
             pred_xyz = pred_full[start:end]
             target = fixed_target(exp_name, len(pred_full))[start:end]
-            metrics = summarize_xyz_error(pred_xyz, target)
+            metrics = summarize_errors(pred_xyz, target, spectral=False)
+            output_wavelengths = pred_full.shape[-1]
         else:
             raise ValueError(f"{path} lacks pred_spectrum or pred_xyz for {exp_name}")
         metrics["render_passes"] = float(payload.get("render_passes", math.nan))
         metrics["latent_channels"] = float(payload.get("k", math.nan))
-        metrics["output_wavelengths"] = float(
-            payload.get("output_wavelengths", payload.get("spectral_samples", math.nan))
-        )
+        metrics["output_wavelengths"] = float(output_wavelengths)
         metrics = {k: v for k, v in metrics.items() if not (isinstance(v, float) and math.isnan(v))}
         result[exp_name] = {method: metrics}
     return method, result

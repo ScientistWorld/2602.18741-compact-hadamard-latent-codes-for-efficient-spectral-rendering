@@ -5,12 +5,14 @@
       "weight": 0.35,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.4},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Average perceptual color error over the slice."},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3, "description": "Typical perceptual color error, less sensitive to a few outliers."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Near-worst-case perceptual color error that catches methods tuned only for the mean."},
+        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean perceptual color error on the hardest ten percent of cases in the slice."},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4, "description": "Mean squared wavelength-space error for methods that emit spectra."},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
+        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
+        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
       },
       "results": {
         "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
@@ -22,12 +24,14 @@
       "weight": 0.35,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.4},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Average perceptual color error under spiky illumination."},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3, "description": "Typical perceptual color error under spiky illumination."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "Near-worst-case narrowband color error that catches brittle spectral encodings."},
+        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean color error on the hardest ten percent of narrowband cases."},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean squared wavelength-space error for spectral predictions."},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
+        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
+        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
       },
       "results": {
         "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
@@ -39,12 +43,14 @@
       "weight": 0.30,
       "primary_metric": "spectral_mse",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 0.7},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 1.0},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 0.7, "description": "Average perceptual color error after repeated interactions."},
+        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.25, "description": "Typical perceptual color error after repeated interactions."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Near-worst-case multibounce color error that catches accumulated failures."},
+        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean color error on the hardest ten percent of multibounce cases."},
+        "spectral_mse": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean squared wavelength-space error after three multiplicative interactions."},
+        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
+        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
+        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
       },
       "results": {
         "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},

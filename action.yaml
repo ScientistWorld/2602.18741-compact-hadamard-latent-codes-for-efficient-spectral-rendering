@@ -2,8 +2,8 @@
 # Once you set action to 'done', STOP immediately.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: pending
+action: done
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: ""
+notes: "Improvements: added tail-error metrics, made output_wavelengths shape-derived, documented all active metrics. Notes: render_passes and latent_channels remain trust-based and should be watched in the runner iteration."
