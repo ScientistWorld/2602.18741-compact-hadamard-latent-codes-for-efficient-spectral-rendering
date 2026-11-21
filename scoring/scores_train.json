@@ -18,9 +18,9 @@
     "multibounce_narrowband": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94": 2.845452625972563,
-          "p95_delta_e94": 8.324164821875424,
-          "spectral_nrmse": 0.6907482741176078
+          "mean_delta_e94": 3.3511825483179623,
+          "p95_delta_e94": 9.3944175573852,
+          "spectral_nrmse": 0.6866930828466945
         },
         "rgb_baseline": {
           "mean_delta_e94": 5.511741351688335,
@@ -32,9 +32,9 @@
     "multibounce_proxy": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94_1bounce": 2.581525707267062,
-          "mean_delta_e94_2bounce": 1.7749879659812584,
-          "mean_delta_e94_3bounce": 1.0001052740484815
+          "mean_delta_e94_1bounce": 3.1211225612229136,
+          "mean_delta_e94_2bounce": 2.1431169566024226,
+          "mean_delta_e94_3bounce": 1.2050938978718335
         },
         "rgb_baseline": {
           "mean_delta_e94_1bounce": 4.1239706500455435,
@@ -46,9 +46,9 @@
     "rendered_scenes": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94": 2.9959219558475825,
-          "p95_delta_e94": 7.388000192758086,
-          "spectral_nrmse": 0.4647663052221896
+          "mean_delta_e94": 3.656449374645883,
+          "p95_delta_e94": 9.08278662756142,
+          "spectral_nrmse": 0.4604065792270936
         },
         "rgb_baseline": {
           "mean_delta_e94": 4.9093711174056205,
@@ -60,23 +60,23 @@
     "rgb_upsampling": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94": 6.23376996793913,
-          "p95_delta_e94": 16.914633244571842,
-          "spectral_nrmse": 0.673732997915353
+          "mean_delta_e94": 4.014269368197671,
+          "p95_delta_e94": 7.131365070726991,
+          "spectral_nrmse": 0.4941179087489694
         },
         "rgb_baseline": {
-          "mean_delta_e94": 6.002563946522561,
-          "p95_delta_e94": 17.833868339926017,
-          "spectral_nrmse": 0.8890846906101348
+          "mean_delta_e94": 3.046281126428482,
+          "p95_delta_e94": 8.898768759145545,
+          "spectral_nrmse": 0.7755626137344784
         }
       }
     },
     "spectral_product_broadband": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94": 2.152461711929679,
-          "p95_delta_e94": 4.528897670510148,
-          "spectral_nrmse": 0.359097941213901
+          "mean_delta_e94": 2.4826836773451504,
+          "p95_delta_e94": 5.154273028930362,
+          "spectral_nrmse": 0.35482471740188004
         },
         "rgb_baseline": {
           "mean_delta_e94": 3.0821942151776365,
@@ -88,9 +88,9 @@
     "spectral_product_narrowband": {
       "results": {
         "hadamard_k6": {
-          "mean_delta_e94": 5.378737967263854,
-          "p95_delta_e94": 13.246196684200656,
-          "spectral_nrmse": 0.6758624809529002
+          "mean_delta_e94": 6.439024399038162,
+          "p95_delta_e94": 13.566205868468364,
+          "spectral_nrmse": 0.6694661393919962
         },
         "rgb_baseline": {
           "mean_delta_e94": 9.158979342348488,

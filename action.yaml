@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Rerun after preemption: rebuilt libraries with lamp-category broadband spectra; full hardening suite"
+notes: "Final hardening suite: fixed val split, broadband upsampling test, 5 seeds, separate-upsampler and combined better variants, shortcuts, fresh reference reproduction"
