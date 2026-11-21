@@ -1,4 +1,2 @@
-action: submit
-gpus: 0
-test: false
-notes: "Bundled CPU gym audit: stronger/weaker variants, three fixed-data seeds, simple baselines, and scoring shortcut probes via unmodified no-argument hidden test."
+action: done
+notes: "Audit complete: 22 hidden-test runs, genuine improvements above seed spread, major scoring shortcuts validated; report and evidence committed, gym files restored."
