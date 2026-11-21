@@ -1,20 +1,14 @@
 #!/bin/bash
-# Run the paper's proposed method.
+# Train the paper's method: the k=6 nonnegative linear Hadamard codec
+# (method/train_codec.py, paper settings by default) and its RGB-to-latent
+# upsampler (method/train_upsampler.py). Writes <out>/codec.json.
 #
-# This script trains/runs the paper's method using code in method/.
-#
-# Usage:
-#   bash scripts/method.sh
+# Usage: bash scripts/method.sh [output_dir]   (extra codec flags via CODEC_ARGS)
 
-set -e
+set -euo pipefail
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 OUT="${1:-outputs/hadamard_k6}"
-EPOCHS="${EPOCHS:-600}"
-DEVICE="${DEVICE:-cpu}"
-K="${K:-6}"
-python method/train_codec.py --output "$OUT" --k "$K" --epochs "$EPOCHS" --device "$DEVICE" --early-stop "${EARLY_STOP:-120}"
-if [ "${EVALUATE_AFTER:-1}" = "1" ]; then
-  bash scripts/evaluate.sh "$OUT" outputs/rgb_baseline
-fi
+python method/train_codec.py --output "$OUT" ${CODEC_ARGS:-}
+python method/train_upsampler.py --codec-dir "$OUT"

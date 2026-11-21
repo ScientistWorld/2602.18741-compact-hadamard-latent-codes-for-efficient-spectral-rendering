@@ -1,9 +1,23 @@
 #!/usr/bin/env python3
+"""Train the paper's nonnegative linear Hadamard codec (Sec. 4) and export codec.json.
+
+Defaults follow the paper: k = 6, softplus(beta = 10) nonnegative linear
+encoder/decoder shared by reflectances and illuminants, blockwise Hadamard
+products, loss weights lambda_e2e = 0.5, lambda_rec = 0.75, lambda_code = 1.0,
+lambda_col = 0.5 (the selected configuration), Adam with lr 1e-3, batch 128,
+up to 150 epochs with early stopping (patience 15) on a validation subset drawn
+randomly from the training spectra, and scaling augmentation of the lights.
+An epoch is one pass over all training reflectance-illuminant pairs.
+
+Optional flags (off by default) implement variants that go beyond the paper.
+"""
+
 from __future__ import annotations
 
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -11,166 +25,171 @@ import torch
 from torch.nn import functional as F
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.append(str(ROOT))
+sys.path.insert(0, str(ROOT))
 
-from data.spectral_common import (  # noqa: E402
-    WAVELENGTHS,
-    color_matching_functions,
-    latent_band_basis,
-    make_dataset,
-    make_multibounce_chains,
-    make_product_pairs,
-    summarize_color_error,
-)
+from data.spectral_data import TRAIN_FILE, load_library, xyz_matrix  # noqa: E402
 from method.hadamard_codec import NonnegativeLinearHadamardCodec, cosine_shaped_mse  # noqa: E402
 
 
-def _sample_batch(rng: np.random.Generator, reflectances: np.ndarray, illuminants: np.ndarray, batch_size: int):
-    r = reflectances[rng.integers(0, len(reflectances), size=batch_size)]
-    l = illuminants[rng.integers(0, len(illuminants), size=batch_size)]
-    return torch.from_numpy(r), torch.from_numpy(l)
+def parse_args(argv=None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--output", default="outputs/hadamard_k6")
+    p.add_argument("--k", type=int, default=6)
+    p.add_argument("--epochs", type=int, default=150)
+    p.add_argument("--patience", type=int, default=15, help="early-stopping patience in epochs (0 disables)")
+    p.add_argument("--batch-size", type=int, default=128)
+    p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--seed", type=int, default=260218741)
+    p.add_argument("--lambda-e2e", type=float, default=0.5)
+    p.add_argument("--lambda-rec", type=float, default=0.75)
+    p.add_argument("--lambda-code", type=float, default=1.0)
+    p.add_argument("--lambda-col", type=float, default=0.5)
+    p.add_argument("--val-fraction", type=float, default=0.15)
+    p.add_argument("--scale-aug", type=float, nargs=2, default=[0.5, 1.5], metavar=("LOW", "HIGH"))
+    p.add_argument("--init", choices=["random", "bands"], default="random")
+    p.add_argument("--max-steps-per-epoch", type=int, default=0, help="0 = full pass over all pairs")
+    # Variants beyond the paper (all off by default).
+    p.add_argument("--lambda-chain", type=float, default=0.0, help="weight of extra 2- and 3-bounce chain losses")
+    p.add_argument("--exposure-normalize", action="store_true", help="normalise product losses by each light's exposure")
+    p.add_argument("--train-file", default=str(TRAIN_FILE))
+    p.add_argument("--extra-reflectances-from", default=None, help="audit only: add Munsell reflectances from another library file")
+    p.add_argument("--threads", type=int, default=1)
+    p.add_argument("--method-name", default=None)
+    return p.parse_args(argv)
 
 
-def _color_loss(cmf: torch.Tensor, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    return F.mse_loss(pred @ cmf.T, target @ cmf.T)
+class Trainer:
+    def __init__(self, args: argparse.Namespace):
+        self.args = args
+        torch.manual_seed(args.seed)
+        torch.set_num_threads(args.threads)
+        self.rng = np.random.default_rng(args.seed)
+        lib = load_library(args.train_file)
+        refl = lib.reflectances
+        if args.extra_reflectances_from:
+            extra = load_library(args.extra_reflectances_from)
+            keep = [i for i, s in enumerate(extra.reflectance_source) if s == "munsell"]
+            refl = np.concatenate([refl, extra.reflectances[keep]])
+        illum = lib.illuminants
+        r_perm = self.rng.permutation(len(refl))
+        l_perm = self.rng.permutation(len(illum))
+        n_rv = int(round(args.val_fraction * len(refl)))
+        n_lv = int(round(args.val_fraction * len(illum)))
+        as_t = lambda x: torch.as_tensor(np.asarray(x), dtype=torch.float32)  # noqa: E731
+        self.r_val, self.r_tr = as_t(refl[r_perm[:n_rv]]), as_t(refl[r_perm[n_rv:]])
+        self.l_val, self.l_tr = as_t(illum[l_perm[:n_lv]]), as_t(illum[l_perm[n_lv:]])
+        self.cmf = as_t(lib.cmf)  # raw CIE colour-matching functions (T_cmf)
+        xyz = xyz_matrix(lib)
+        self.xyz = as_t(xyz)
+        self.white = as_t(xyz @ lib.visible_mask)
+        self.codec = NonnegativeLinearHadamardCodec(n_wavelengths=refl.shape[1], k=args.k)
+        if args.init == "bands":
+            self.codec.reset_from_bands(lib.wavelengths, lib.visible_mask)
+        self.opt = torch.optim.Adam(self.codec.parameters(), lr=args.lr)
+        vr, vl = np.meshgrid(np.arange(n_rv), np.arange(n_lv), indexing="ij")
+        self.val_r = vr.ravel()
+        self.val_l = vl.ravel()
+        self.val_chain = self.rng.integers(n_rv, size=(len(self.val_r), 2))
 
+    def exposure(self, light: torch.Tensor) -> torch.Tensor:
+        rel = (light @ self.xyz.T) / self.white
+        return 1.0 / rel.max(dim=-1, keepdim=True).values.clamp_min(1e-8)
 
-def _loss_terms(codec: NonnegativeLinearHadamardCodec, cmf: torch.Tensor, r: torch.Tensor, l: torch.Tensor, args: argparse.Namespace):
-    target = r * l
-    pred = codec.product_spectrum(r, l)
-    z_prod = codec.product_code(r, l)
-    loss_e2e = cosine_shaped_mse(pred, target)
-    loss_rec = F.mse_loss(codec(r), r) + F.mse_loss(codec(l), l)
-    loss_code = F.mse_loss(z_prod, codec.encode(target))
-    loss_col = _color_loss(cmf, pred, target)
-    loss = (
-        args.lambda_e2e * loss_e2e
-        + args.lambda_rec * loss_rec
-        + args.lambda_code * loss_code
-        + args.lambda_col * loss_col
-    )
-    return loss, {
-        "e2e": float(loss_e2e.detach().cpu()),
-        "rec": float(loss_rec.detach().cpu()),
-        "code": float(loss_code.detach().cpu()),
-        "color": float(loss_col.detach().cpu()),
-    }
+    def loss(self, r: torch.Tensor, l: torch.Tensor, chain: tuple[torch.Tensor, torch.Tensor] | None):
+        a, codec = self.args, self.codec
+        target = r * l
+        z_r, z_l = codec.encode(r), codec.encode(l)
+        z_prod = codec.blockwise_product(z_r, z_l)
+        pred = codec.decode(z_prod)
+        e = self.exposure(l) if a.exposure_normalize else torch.ones_like(l[:, :1])
+        loss_e2e = cosine_shaped_mse(pred * e, target * e)
+        loss_rec = F.mse_loss(codec(r), r) + F.mse_loss(codec(l), l)
+        loss_code = F.mse_loss(z_prod, codec.encode(target))
+        loss_col = F.mse_loss((pred * e) @ self.cmf.T, (target * e) @ self.cmf.T)
+        total = a.lambda_e2e * loss_e2e + a.lambda_rec * loss_rec + a.lambda_code * loss_code + a.lambda_col * loss_col
+        if a.lambda_chain > 0 and chain is not None:
+            z, t, chain_loss = z_prod, target, 0.0
+            for extra in chain:
+                z = codec.blockwise_product(z, codec.encode(extra))
+                t = t * extra
+                p = codec.decode(z)
+                chain_loss = chain_loss + cosine_shaped_mse(p * e, t * e) + F.mse_loss((p * e) @ self.cmf.T, (t * e) @ self.cmf.T)
+            total = total + a.lambda_chain * chain_loss
+        return total
 
-
-def train(args: argparse.Namespace) -> NonnegativeLinearHadamardCodec:
-    torch.manual_seed(args.seed)
-    rng = np.random.default_rng(args.seed)
-    ds = make_dataset(seed=args.seed)
-    device = torch.device(args.device)
-    codec = NonnegativeLinearHadamardCodec(n_wavelengths=WAVELENGTHS.size, k=args.k).to(device)
-    if args.band_init:
-        codec.reset_from_basis(latent_band_basis(args.k))
-    opt = torch.optim.Adam(codec.parameters(), lr=args.lr)
-    cmf = torch.from_numpy(color_matching_functions()).to(device)
-    reflectances_all = ds.reflectance_train.astype(np.float32)
-    illuminants_all = ds.illumination_train.astype(np.float32)
-    r_cut = int(0.85 * len(reflectances_all))
-    l_cut = int(0.85 * len(illuminants_all))
-    reflectances, reflectances_val = reflectances_all[:r_cut], reflectances_all[r_cut:]
-    illuminants, illuminants_val = illuminants_all[:l_cut], illuminants_all[l_cut:]
-    steps_per_epoch = max(1, len(reflectances) // args.batch_size)
-    best = float("inf")
-    best_state = {k: v.detach().cpu().clone() for k, v in codec.state_dict().items()}
-    patience = 0
-    for epoch in range(args.epochs):
-        codec.train()
-        for _ in range(steps_per_epoch):
-            r, l = _sample_batch(rng, reflectances, illuminants, args.batch_size)
-            loss, _ = _loss_terms(codec, cmf, r.to(device), l.to(device), args)
-            opt.zero_grad(set_to_none=True)
-            loss.backward()
-            opt.step()
-        codec.eval()
+    def validation_loss(self) -> float:
         with torch.no_grad():
-            r_val, l_val = _sample_batch(rng, reflectances_val, illuminants_val, min(512, args.batch_size * 4))
-            val_loss, _ = _loss_terms(codec, cmf, r_val.to(device), l_val.to(device), args)
-            value = float(val_loss.detach().cpu())
-        if value < best - 1e-7:
-            best = value
-            best_state = {k: v.detach().cpu().clone() for k, v in codec.state_dict().items()}
-            patience = 0
-        else:
-            patience += 1
-        if args.early_stop and patience > args.early_stop:
-            break
-    codec.load_state_dict(best_state)
-    return codec.cpu()
+            r = self.r_val[self.val_r]
+            l = self.l_val[self.val_l]
+            chain = (self.r_val[self.val_chain[:, 0]], self.r_val[self.val_chain[:, 1]])
+            return float(self.loss(r, l, chain))
+
+    def run(self) -> dict:
+        a = self.args
+        n_r, n_l = len(self.r_tr), len(self.l_tr)
+        n_pairs = n_r * n_l
+        steps = n_pairs // a.batch_size
+        if a.max_steps_per_epoch:
+            steps = min(steps, a.max_steps_per_epoch)
+        lo, hi = a.scale_aug
+        best = float("inf")
+        best_state = {k: v.detach().clone() for k, v in self.codec.state_dict().items()}
+        wait = 0
+        history = []
+        start = time.time()
+        epochs_run = 0
+        for epoch in range(a.epochs):
+            perm = torch.as_tensor(self.rng.permutation(n_pairs))
+            self.codec.train()
+            for s in range(steps):
+                idx = perm[s * a.batch_size:(s + 1) * a.batch_size]
+                r = self.r_tr[idx // n_l]
+                l = self.l_tr[idx % n_l] * (lo + (hi - lo) * torch.rand(len(idx), 1))
+                chain = None
+                if a.lambda_chain > 0:
+                    extra = torch.randint(n_r, (2, len(idx)))
+                    chain = (self.r_tr[extra[0]], self.r_tr[extra[1]])
+                loss = self.loss(r, l, chain)
+                self.opt.zero_grad(set_to_none=True)
+                loss.backward()
+                self.opt.step()
+            epochs_run = epoch + 1
+            self.codec.eval()
+            value = self.validation_loss()
+            history.append(value)
+            if value < best - 1e-12:
+                best, wait = value, 0
+                best_state = {k: v.detach().clone() for k, v in self.codec.state_dict().items()}
+            else:
+                wait += 1
+            if a.patience and wait >= a.patience:
+                break
+        self.codec.load_state_dict(best_state)
+        return {
+            "epochs_run": epochs_run,
+            "steps_per_epoch": steps,
+            "best_validation_loss": best,
+            "validation_history": history,
+            "train_pairs": n_pairs,
+            "seconds": time.time() - start,
+        }
 
 
-def _predict_product(codec: NonnegativeLinearHadamardCodec, kind: str, count: int) -> dict:
-    r, l = make_product_pairs(kind, count=count)
-    with torch.no_grad():
-        pred = codec.product_spectrum(torch.from_numpy(r), torch.from_numpy(l)).numpy()
-    target = r * l
-    metrics = summarize_color_error(pred, target)
-    return {
-        "reflectance": r.tolist(),
-        "illumination": l.tolist(),
-        "target_spectrum": target.tolist(),
-        "pred_spectrum": pred.tolist(),
-        "metrics_preview": metrics,
-    }
-
-
-def _predict_multibounce(codec: NonnegativeLinearHadamardCodec, kind: str, count: int) -> dict:
-    reflectances, illumination = make_multibounce_chains(kind, count=count, bounces=3)
-    current_spec = illumination.copy()
-    with torch.no_grad():
-        current_code = codec.encode(torch.from_numpy(illumination))
-        for bounce in range(reflectances.shape[1]):
-            r = torch.from_numpy(reflectances[:, bounce, :])
-            current_spec = current_spec * reflectances[:, bounce, :]
-            current_code = current_code * codec.encode(r)
-        pred = codec.decode(current_code).numpy()
-    metrics = summarize_color_error(pred, current_spec)
-    return {
-        "reflectance_chain": reflectances.tolist(),
-        "illumination": illumination.tolist(),
-        "target_spectrum": current_spec.tolist(),
-        "pred_spectrum": pred.tolist(),
-        "metrics_preview": metrics,
-    }
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--output", default="outputs/hadamard_k6")
-    parser.add_argument("--k", type=int, default=6)
-    parser.add_argument("--epochs", type=int, default=180)
-    parser.add_argument("--batch-size", type=int, default=128)
-    parser.add_argument("--lr", type=float, default=1e-3)
-    parser.add_argument("--seed", type=int, default=260218741)
-    parser.add_argument("--device", default="cpu")
-    parser.add_argument("--lambda-e2e", type=float, default=0.5)
-    parser.add_argument("--lambda-rec", type=float, default=0.75)
-    parser.add_argument("--lambda-code", type=float, default=1.0)
-    parser.add_argument("--lambda-col", type=float, default=0.5)
-    parser.add_argument("--early-stop", type=int, default=0)
-    parser.add_argument("--eval-count", type=int, default=240)
-    parser.add_argument("--band-init", action=argparse.BooleanOptionalAction, default=True)
-    args = parser.parse_args()
+def main(argv=None) -> None:
+    args = parse_args(argv)
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
-    codec = train(args)
-    torch.save({"state_dict": codec.state_dict(), "k": args.k}, out / "codec.pt")
-    payload = {
-        "method": f"hadamard_k{args.k}",
-        "k": args.k,
-        "render_passes": args.k // 3,
-        "output_wavelengths": int(WAVELENGTHS.size),
-        "experiments": {
-            "spectral_product_broadband": _predict_product(codec, "broadband", args.eval_count),
-            "spectral_product_narrowband": _predict_product(codec, "narrowband", args.eval_count),
-            "multibounce_narrowband": _predict_multibounce(codec, "narrowband", max(80, args.eval_count // 2)),
-        },
-    }
-    (out / "predictions.json").write_text(json.dumps(payload))
-    print(json.dumps({k: v["metrics_preview"] for k, v in payload["experiments"].items()}, indent=2))
+    trainer = Trainer(args)
+    log = trainer.run()
+    torch.save({"state_dict": trainer.codec.state_dict(), "k": args.k}, out / "codec.pt")
+    codec = {"method": args.method_name or out.name, "k": args.k}
+    codec.update(trainer.codec.export())
+    codec_path = out / "codec.json"
+    if codec_path.exists():  # keep an upsampler trained earlier only if it matches; otherwise drop it
+        codec_path.unlink()
+    codec_path.write_text(json.dumps(codec))
+    (out / "train_log.json").write_text(json.dumps({"config": vars(args), **log}, indent=2))
+    print(json.dumps({k: v for k, v in log.items() if k != "validation_history"}, indent=2))
 
 
 if __name__ == "__main__":

@@ -1,13 +1,11 @@
 #!/bin/bash
-# Train-slice evaluation entry point.
-#
-# Mirrors scripts/evaluate.sh: pass output directories containing
-# predictions.json files, or pass no arguments to enumerate outputs/*.
+# Training-slice evaluation (public). With no arguments it scores every
+# method directory under outputs/ on the training spectra and writes
+# scoring/scores_train.json. Same interface and protocol as the test slice.
 
-set -e
+set -euo pipefail
 
-cd /home/user
-
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p scoring
 
-python eval/train/evaluate_predictions.py "$@" --output scoring/scores_train.json
+python eval/train/evaluate_codecs.py "$@" --output scoring/scores_train.json

@@ -1,170 +1,136 @@
 #!/usr/bin/env python3
+"""Train the paper's RGB-to-latent upsampling MLP (Sec. 5) for a trained codec.
+
+A single per-pixel MLP (3 -> 128 -> 128 -> k, SiLU) maps the linear-RGB value
+of an asset to the frozen codec's latent code. Loss: latent MSE + 0.3 * mean
+max-abs latent error + 0.05 * DeltaE76 of the decoded colours. AdamW (lr 2e-3,
+weight decay 1e-5), batch 64, gradient clipping at 1.0, ReduceLROnPlateau
+(factor 0.5, patience 200, min lr 1e-6), 4,500 epochs. As in the paper one
+network serves both reflectances and illuminants. The result is appended to
+``<codec-dir>/codec.json`` under ``upsampler``.
+"""
+
 from __future__ import annotations
 
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
 import torch
 from torch import nn
-from torch.nn import functional as F
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.append(str(ROOT))
+sys.path.insert(0, str(ROOT))
 
-from data.spectral_common import (  # noqa: E402
-    WAVELENGTHS,
-    color_matching_functions,
-    make_dataset,
-    make_product_pairs,
-    spectra_to_xyz,
-    summarize_color_error,
-    xyz_to_lab,
-)
-from method.hadamard_codec import NonnegativeLinearHadamardCodec  # noqa: E402
+from data.spectral_data import TRAIN_FILE, asset_rgb, load_library, xyz_matrix  # noqa: E402
 
 
 class RGBToLatentUpsampler(nn.Module):
-    """Paper's per-pixel RGB-to-latent MLP for legacy RGB assets."""
-
-    def __init__(self, k: int = 6, hidden: int = 128):
+    def __init__(self, k: int, hidden: int = 128):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(3, hidden),
-            nn.SiLU(),
-            nn.Linear(hidden, hidden),
-            nn.SiLU(),
-            nn.Linear(hidden, k),
-        )
+        self.net = nn.Sequential(nn.Linear(3, hidden), nn.SiLU(), nn.Linear(hidden, hidden), nn.SiLU(), nn.Linear(hidden, k))
 
     def forward(self, rgb: torch.Tensor) -> torch.Tensor:
-        return F.softplus(self.net(rgb))
+        return self.net(rgb)
+
+    def export(self) -> dict:
+        layers = [m for m in self.net if isinstance(m, nn.Linear)]
+        acts = ["silu", "silu", "identity"]
+        return {
+            "layers": [
+                {"weight": m.weight.detach().double().numpy().tolist(), "bias": m.bias.detach().double().numpy().tolist(), "activation": act}
+                for m, act in zip(layers, acts)
+            ]
+        }
 
 
-def _torch_xyz_to_lab(xyz: torch.Tensor, white: torch.Tensor) -> torch.Tensor:
-    ratio = xyz / white.clamp_min(1e-8)
-    delta = 6.0 / 29.0
-    f = torch.where(ratio > delta**3, torch.pow(ratio.clamp_min(1e-8), 1.0 / 3.0), ratio / (3 * delta**2) + 4.0 / 29.0)
-    return torch.stack(
-        [116.0 * f[..., 1] - 16.0, 500.0 * (f[..., 0] - f[..., 1]), 200.0 * (f[..., 1] - f[..., 2])],
-        dim=-1,
-    )
+def _matrix(spec) -> np.ndarray:
+    if isinstance(spec, dict) and "layers" in spec:
+        if len(spec["layers"]) != 1 or spec["layers"][0].get("activation", "identity") not in ("identity", "linear"):
+            raise ValueError("upsampler training supports linear codecs only")
+        spec = spec["layers"][0]["weight"]
+    return np.asarray(spec, dtype=np.float64)
 
 
-def _load_codec(path: Path, device: torch.device) -> NonnegativeLinearHadamardCodec:
-    payload = torch.load(path, map_location=device)
-    codec = NonnegativeLinearHadamardCodec(n_wavelengths=WAVELENGTHS.size, k=int(payload["k"])).to(device)
-    codec.load_state_dict(payload["state_dict"])
-    codec.eval()
-    for param in codec.parameters():
-        param.requires_grad_(False)
-    return codec
+def lab(xyz: torch.Tensor, white: torch.Tensor) -> torch.Tensor:
+    t = xyz / white
+    d = 6.0 / 29.0
+    f = torch.where(t > d**3, t.clamp_min(d**3) ** (1.0 / 3.0), t / (3 * d * d) + 4.0 / 29.0)
+    return torch.stack([116 * f[:, 1] - 16, 500 * (f[:, 0] - f[:, 1]), 200 * (f[:, 1] - f[:, 2])], dim=1)
 
 
-def _prepare_training_data(codec: NonnegativeLinearHadamardCodec, seed: int, device: torch.device):
-    ds = make_dataset(seed=seed)
-    spectra = np.concatenate([ds.reflectance_train, ds.illumination_train], axis=0).astype(np.float32)
-    rgb = spectra_to_xyz(spectra).astype(np.float32)
-    with torch.no_grad():
-        latent = codec.encode(torch.from_numpy(spectra).to(device)).cpu().numpy().astype(np.float32)
-    split = int(0.85 * len(spectra))
-    return rgb[:split], latent[:split], rgb[split:], latent[split:]
+def main(argv=None) -> None:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--codec-dir", default="outputs/hadamard_k6")
+    p.add_argument("--epochs", type=int, default=4500)
+    p.add_argument("--batch-size", type=int, default=64)
+    p.add_argument("--lr", type=float, default=2e-3)
+    p.add_argument("--weight-decay", type=float, default=1e-5)
+    p.add_argument("--lambda-maxabs", type=float, default=0.3)
+    p.add_argument("--lambda-color", type=float, default=0.05)
+    p.add_argument("--hidden", type=int, default=128)
+    p.add_argument("--seed", type=int, default=260218741)
+    p.add_argument("--threads", type=int, default=1)
+    p.add_argument("--train-file", default=str(TRAIN_FILE))
+    args = p.parse_args(argv)
 
-
-def train(args: argparse.Namespace) -> tuple[RGBToLatentUpsampler, NonnegativeLinearHadamardCodec]:
     torch.manual_seed(args.seed)
+    torch.set_num_threads(args.threads)
     rng = np.random.default_rng(args.seed)
-    device = torch.device(args.device)
-    codec = _load_codec(Path(args.codec), device)
-    rgb_train, z_train, rgb_val, z_val = _prepare_training_data(codec, args.seed, device)
-    model = RGBToLatentUpsampler(k=codec.k).to(device)
+    codec_path = Path(args.codec_dir) / "codec.json"
+    codec = json.loads(codec_path.read_text())
+    enc_r = _matrix(codec.get("encoder_reflectance", codec.get("encoder")))
+    enc_l = _matrix(codec.get("encoder_illuminant", codec.get("encoder")))
+    dec = _matrix(codec["decoder"])
+    k = enc_r.shape[0]
+
+    lib = load_library(args.train_file)
+    rgb = np.concatenate([asset_rgb(lib.reflectances, "reflectance", lib), asset_rgb(lib.illuminants, "illuminant", lib)])
+    z = np.concatenate([np.clip(lib.reflectances @ enc_r.T, 0, None), np.clip(lib.illuminants @ enc_l.T, 0, None)])
+    x_t = torch.as_tensor(rgb, dtype=torch.float32)
+    z_t = torch.as_tensor(z, dtype=torch.float32)
+    dec_t = torch.as_tensor(dec, dtype=torch.float32)
+    xyz_t = torch.as_tensor(xyz_matrix(lib), dtype=torch.float32)
+    white = torch.as_tensor(xyz_matrix(lib) @ lib.visible_mask, dtype=torch.float32)
+
+    model = RGBToLatentUpsampler(k, args.hidden)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=200, min_lr=1e-6)
-    cmf = torch.from_numpy(color_matching_functions()).to(device)
-    white = torch.from_numpy(spectra_to_xyz(np.ones((1, WAVELENGTHS.size), dtype=np.float32))[0]).to(device)
-    best = float("inf")
-    best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+    sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode="min", factor=0.5, patience=200, min_lr=1e-6)
+    n = len(x_t)
+    start = time.time()
+    history = []
     for epoch in range(args.epochs):
-        model.train()
-        order = rng.permutation(len(rgb_train))
-        for start in range(0, len(order), args.batch_size):
-            idx = order[start : start + args.batch_size]
-            rgb = torch.from_numpy(rgb_train[idx]).to(device)
-            target_z = torch.from_numpy(z_train[idx]).to(device)
-            pred_z = model(rgb)
-            latent_loss = F.mse_loss(pred_z, target_z) + args.lambda_max_abs * (pred_z - target_z).abs().amax(dim=-1).mean()
-            pred_lab = _torch_xyz_to_lab(codec.decode(pred_z) @ cmf.T, white)
-            target_lab = _torch_xyz_to_lab(codec.decode(target_z) @ cmf.T, white)
-            color_loss = torch.linalg.vector_norm(pred_lab - target_lab, dim=-1).mean()
-            loss = latent_loss + args.lambda_color * color_loss
+        perm = torch.as_tensor(rng.permutation(n))
+        total, count = 0.0, 0
+        for s in range(0, n, args.batch_size):
+            idx = perm[s:s + args.batch_size]
+            z_pred = model(x_t[idx])
+            z_gt = z_t[idx]
+            diff = z_pred - z_gt
+            latent = (diff**2).mean() + args.lambda_maxabs * diff.abs().max(dim=1).values.mean()
+            lab_pred = lab((z_pred @ dec_t.T) @ xyz_t.T, white)
+            lab_gt = lab((z_gt @ dec_t.T) @ xyz_t.T, white)
+            color = torch.sqrt(((lab_pred - lab_gt) ** 2).sum(dim=1) + 1e-12).mean()
+            loss = latent + args.lambda_color * color
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
-        model.eval()
-        with torch.no_grad():
-            rgb = torch.from_numpy(rgb_val).to(device)
-            target_z = torch.from_numpy(z_val).to(device)
-            pred_z = model(rgb)
-            val = F.mse_loss(pred_z, target_z) + args.lambda_max_abs * (pred_z - target_z).abs().amax(dim=-1).mean()
-            value = float(val.detach().cpu())
-        scheduler.step(value)
-        if value < best:
-            best = value
-            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
-    model.load_state_dict(best_state)
-    return model.cpu(), codec.cpu()
+            total += float(loss) * len(idx)
+            count += len(idx)
+        epoch_loss = total / count
+        sched.step(epoch_loss)
+        if epoch % 100 == 0 or epoch == args.epochs - 1:
+            history.append({"epoch": epoch, "loss": epoch_loss, "lr": opt.param_groups[0]["lr"]})
 
-
-def _predict_rgb_asset_products(model: RGBToLatentUpsampler, codec: NonnegativeLinearHadamardCodec, kind: str, count: int) -> dict:
-    reflectance, illumination = make_product_pairs(kind, count=count)
-    r_rgb = torch.from_numpy(spectra_to_xyz(reflectance).astype(np.float32))
-    l_rgb = torch.from_numpy(spectra_to_xyz(illumination).astype(np.float32))
-    with torch.no_grad():
-        z_r = model(r_rgb).view(-1, codec.k // 3, 3)
-        z_l = model(l_rgb).view(-1, codec.k // 3, 3)
-        pred = codec.decode((z_r * z_l).view(-1, codec.k)).numpy()
-    target = reflectance * illumination
-    return {
-        "reflectance_rgb": r_rgb.numpy().tolist(),
-        "illumination_rgb": l_rgb.numpy().tolist(),
-        "target_spectrum": target.tolist(),
-        "pred_spectrum": pred.tolist(),
-        "metrics_preview": summarize_color_error(pred, target),
-    }
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--codec", default="outputs/hadamard_k6/codec.pt")
-    parser.add_argument("--output", default="outputs/rgb_upsampler_k6")
-    parser.add_argument("--epochs", type=int, default=1200)
-    parser.add_argument("--batch-size", type=int, default=64)
-    parser.add_argument("--lr", type=float, default=2e-3)
-    parser.add_argument("--weight-decay", type=float, default=1e-5)
-    parser.add_argument("--lambda-max-abs", type=float, default=0.3)
-    parser.add_argument("--lambda-color", type=float, default=0.05)
-    parser.add_argument("--eval-count", type=int, default=240)
-    parser.add_argument("--seed", type=int, default=260218741)
-    parser.add_argument("--device", default="cpu")
-    args = parser.parse_args()
-    out = Path(args.output)
-    out.mkdir(parents=True, exist_ok=True)
-    model, codec = train(args)
-    torch.save({"state_dict": model.state_dict(), "k": codec.k}, out / "upsampler.pt")
-    payload = {
-        "method": f"rgb_upsampler_k{codec.k}",
-        "k": codec.k,
-        "render_passes": codec.k // 3,
-        "output_wavelengths": int(WAVELENGTHS.size),
-        "experiments": {
-            "rgb_upsampling_narrowband": _predict_rgb_asset_products(model, codec, "narrowband", args.eval_count)
-        },
-    }
-    (out / "predictions.json").write_text(json.dumps(payload))
-    print(json.dumps(payload["experiments"]["rgb_upsampling_narrowband"]["metrics_preview"], indent=2))
+    codec["upsampler"] = model.export()
+    codec_path.write_text(json.dumps(codec))
+    log = {"config": vars(args), "seconds": time.time() - start, "history": history}
+    (Path(args.codec_dir) / "upsampler_log.json").write_text(json.dumps(log, indent=2))
+    print(json.dumps({"final_loss": history[-1], "seconds": log["seconds"]}, indent=2))
 
 
 if __name__ == "__main__":

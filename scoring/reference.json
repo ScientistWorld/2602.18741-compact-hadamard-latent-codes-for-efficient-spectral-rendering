@@ -1,60 +1,90 @@
 {
+  "_note": "Experiments run on measured Munsell reflectances and CIE/synthetic illuminants (the paper's LSPDD lamps need an account), rendered by the evaluator in each method's latent space. The paper reports no number on this exact protocol except the multi-bounce selection proxy; results.hadamard_k6 therefore holds this gym's reproduced held-out value where the paper has none, and the paper's own figures are kept under _paper_reported.",
   "experiments": {
     "spectral_product_broadband": {
-      "description": "Single material-light spectral product under broadband illumination, corresponding to the paper's one-bounce codec proxy and two-pass k=6 rendering claim.",
-      "weight": 0.35,
+      "description": "Single reflectance x light product under held-out broadband lights, exposed for the light. Paper: one-interaction accuracy of the k=6 two-pass code (Figs. 1, 4).",
+      "weight": 0.15,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Average perceptual color error over the slice."},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3, "description": "Typical perceptual color error, less sensitive to a few outliers."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Near-worst-case perceptual color error that catches methods tuned only for the mean."},
-        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean perceptual color error on the hardest ten percent of cases in the slice."},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 0.4, "description": "Mean squared wavelength-space error for methods that emit spectra."},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error against the 47-sample spectral product."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error (tail behaviour)."},
+        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample ||decoded - true|| / ||true|| over the 47 samples."}
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 2.16, "render_passes": 2, "latent_channels": 6, "output_wavelengths": 47}
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
       }
     },
     "spectral_product_narrowband": {
-      "description": "Single material-light spectral product under narrowband illumination, the difficult case where the paper reports visible RGB color shifts and improved k=6 latent rendering.",
-      "weight": 0.35,
+      "description": "Single product under held-out spiky narrowband lights, the paper's stress case where RGB rendering shows large colour shifts (Figs. 1, 5).",
+      "weight": 0.2,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Average perceptual color error under spiky illumination."},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.3, "description": "Typical perceptual color error under spiky illumination."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "Near-worst-case narrowband color error that catches brittle spectral encodings."},
-        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean color error on the hardest ten percent of narrowband cases."},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean squared wavelength-space error for spectral predictions."},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error against the 47-sample spectral product."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error (tail behaviour)."},
+        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample relative spectral error."}
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 2.16, "render_passes": 2, "latent_channels": 6, "output_wavelengths": 47}
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
       }
     },
     "multibounce_narrowband": {
-      "description": "Three-bounce narrowband multiplicative chain, corresponding to the paper's multibounce stability test and supplemental narrowband MSE report.",
-      "weight": 0.30,
-      "primary_metric": "spectral_mse",
+      "description": "Three-reflectance chains under narrowband lights (Fig. 9 stress setting): repeated per-channel products in the code space.",
+      "weight": 0.1,
+      "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 0.7, "description": "Average perceptual color error after repeated interactions."},
-        "median_delta_e94": {"higher_is_better": false, "coefficient": 0.25, "description": "Typical perceptual color error after repeated interactions."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Near-worst-case multibounce color error that catches accumulated failures."},
-        "worst_decile_delta_e94": {"higher_is_better": false, "coefficient": 0.45, "description": "Mean color error on the hardest ten percent of multibounce cases."},
-        "spectral_mse": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean squared wavelength-space error after three multiplicative interactions."},
-        "render_passes": {"higher_is_better": false, "coefficient": -0.2, "description": "Declared number of rendering passes, preserving the paper's compact-rendering constraint."},
-        "latent_channels": {"higher_is_better": false, "coefficient": -0.1, "description": "Declared latent channel count, preserving the compact-code constraint."},
-        "output_wavelengths": {"higher_is_better": true, "coefficient": 0.05, "description": "Number of output channels inferred from predictions, distinguishing spectral output from tristimulus output."}
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 error after three interactions."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error after three interactions."},
+        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample relative spectral error after three interactions."}
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "render_passes": 1, "latent_channels": 3, "output_wavelengths": 3},
-        "hadamard_k6": {"type": "proposed", "spectral_mse": 0.00072, "render_passes": 2, "latent_channels": 6, "output_wavelengths": 47}
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+      }
+    },
+    "multibounce_proxy": {
+      "description": "The paper's model-selection protocol (Sec. 4.5): held-out light x reflectance chains S1, S2, S3 with newly sampled reflectances, mean CIE94 per bounce, without re-exposure. 3,000 chains instead of 500; lights drawn half broadband, half narrowband.",
+      "weight": 0.1,
+      "primary_metric": "mean_delta_e94_3bounce",
+      "metrics": {
+        "mean_delta_e94_1bounce": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean CIE94 error of S1."},
+        "mean_delta_e94_2bounce": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean CIE94 error of S2."},
+        "mean_delta_e94_3bounce": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 error of S3."}
+      },
+      "_paper_reported": {"hadamard_k6": {"mean_delta_e94_1bounce": 2.16, "mean_delta_e94_2bounce": 1.79, "mean_delta_e94_3bounce": 1.74}},
+      "results": {
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94_3bounce": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94_3bounce": 1.74}
+      }
+    },
+    "rendered_scenes": {
+      "description": "Path-traced-style pixels: each pixel sums 30 weighted light paths of depth 1-8 from two lights (broadband or narrowband, random intensity) over ten held-out materials; per-scene auto-exposure. Exercises scaling, addition and products together as in the paper's rendered scenes and unbounded-depth tests (Figs. 4-9).",
+      "weight": 0.3,
+      "primary_metric": "mean_delta_e94",
+      "metrics": {
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean per-pixel CIE94 error against the spectral render."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile per-pixel CIE94 error."},
+        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-pixel relative spectral error."}
+      },
+      "_paper_reported": {"hadamard_k6": {"narrowband_image_mse_by_depth": [0.000817, 0.000788, 0.00072, 0.000711], "note": "Fig. 9 per-pixel image MSE for 1, 2, 3 and unbounded bounces in one Mitsuba scene; not on this gym's scale."}},
+      "results": {
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+      }
+    },
+    "rgb_upsampling": {
+      "description": "Legacy-RGB assets: only each held-out asset's linear-sRGB value is given to the method's upsampler; the product (half broadband, half narrowband lights) is compared with the true spectral product (Sec. 5, Figs. 3-4).",
+      "weight": 0.15,
+      "primary_metric": "mean_delta_e94",
+      "metrics": {
+        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error of upsampled-asset products."},
+        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error of upsampled-asset products."},
+        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean relative spectral error of upsampled-asset products."}
+      },
+      "results": {
+        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
+        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
       }
     }
   }

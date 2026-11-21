@@ -1,24 +1,11 @@
 #!/bin/bash
-# Run a baseline method from the paper.
+# Standard RGB rendering baseline expressed as a 3-channel, one-pass codec.
 #
-# Baselines are simple reference methods the paper compares against. 
-# Implement this only if applicable, i.e. the paper has baselines.
-# You do not need to implement all baselines to begin — 
-# just enough to validate that the evaluation pipeline works 
-# and provide a reference point. You can decide to expand more baselines later.
-# Each baseline must be actually run and scored through evaluate.sh
-# so the numbers are verified, not self-reported.
-# You can decide what this baseline script should do yourself.
-#
-# Usage:
-#   bash scripts/baseline.sh <name>
+# Usage: bash scripts/baseline.sh [output_dir]
 
-set -e
+set -euo pipefail
 
-cd /home/user
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 OUT="${1:-outputs/rgb_baseline}"
 python baseline/rgb_baseline.py --output "$OUT"
-if [ "${EVALUATE_AFTER:-1}" = "1" ]; then
-  bash scripts/evaluate.sh "$OUT"
-fi

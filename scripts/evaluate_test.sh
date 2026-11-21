@@ -1,15 +1,12 @@
 #!/bin/bash
-# Held-out test-slice evaluation entry point.
-#
-# Mirrors scripts/evaluate.sh, but writes scoring/scores_test.json and uses
-# scoring/scores_train.json, when present, to score the same method set.
+# Hidden held-out evaluation. Takes no arguments: scores every method
+# directory under outputs/ (each must hold a codec.json) on held-out spectra
+# and writes scoring/scores_test.json. Failed or missing submissions receive
+# the worst value of every metric.
 
-set -e
+set -euo pipefail
 
-cd /home/user
-
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p scoring
 
-python eval/test/evaluate_predictions.py "$@" \
-  --output scoring/scores_test.json \
-  --match-train scoring/scores_train.json
+python eval/test/evaluate_codecs.py "$@" --output scoring/scores_test.json
