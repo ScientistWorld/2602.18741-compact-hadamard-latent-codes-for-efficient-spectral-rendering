@@ -1,0 +1,12 @@
+{
+  "illumination_train_count": 708,
+  "broadband_test_count": 180,
+  "broadband_test_also_in_train": 179,
+  "narrowband_test_count": 180,
+  "narrowband_test_also_in_train": 176,
+  "reflectance_train_count": 1013,
+  "reflectance_test_count": 436,
+  "reflectance_test_also_in_train": 0,
+  "active_wavelengths": 30,
+  "total_wavelengths": 47
+}

@@ -1,0 +1,152 @@
+{
+  "experiments": {
+    "multibounce_narrowband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 49.309532165527344,
+          "median_delta_e94": 50.30319595336914,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 93.11122131347656,
+          "render_passes": 2.0,
+          "spectral_mse": 0.005573905538767576,
+          "worst_decile_delta_e94": 108.9543228149414
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 11.039916038513184,
+          "median_delta_e94": 11.000778198242188,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 20.75557518005371,
+          "render_passes": 1.0,
+          "spectral_mse": 0.004355474375188351,
+          "worst_decile_delta_e94": 21.499658584594727
+        }
+      }
+    },
+    "spectral_product_broadband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 75.78578186035156,
+          "median_delta_e94": 75.75906372070312,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 93.92457580566406,
+          "render_passes": 2.0,
+          "spectral_mse": 0.11902385950088501,
+          "worst_decile_delta_e94": 94.71419525146484
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 2.5692059993743896,
+          "median_delta_e94": 2.412799835205078,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 4.415172576904297,
+          "render_passes": 1.0,
+          "spectral_mse": 0.032246433198451996,
+          "worst_decile_delta_e94": 5.208186626434326
+        }
+      }
+    },
+    "spectral_product_narrowband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 83.1348648071289,
+          "median_delta_e94": 83.23942565917969,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 129.94378662109375,
+          "render_passes": 2.0,
+          "spectral_mse": 0.0255352184176445,
+          "worst_decile_delta_e94": 133.80152893066406
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 7.765255451202393,
+          "median_delta_e94": 7.635504245758057,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 14.047476768493652,
+          "render_passes": 1.0,
+          "spectral_mse": 0.0158106479793787,
+          "worst_decile_delta_e94": 15.215411186218262
+        }
+      }
+    }
+  }
+}
+{
+  "experiments": {
+    "multibounce_narrowband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 48.95151138305664,
+          "median_delta_e94": 43.92866516113281,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 92.9720458984375,
+          "render_passes": 2.0,
+          "spectral_mse": 0.004946290515363216,
+          "worst_decile_delta_e94": 97.59188079833984
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 10.839980125427246,
+          "median_delta_e94": 9.770956039428711,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 21.917638778686523,
+          "render_passes": 1.0,
+          "spectral_mse": 0.0036394037306308746,
+          "worst_decile_delta_e94": 23.745336532592773
+        }
+      }
+    },
+    "spectral_product_broadband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 76.96057891845703,
+          "median_delta_e94": 75.25196838378906,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 96.79209899902344,
+          "render_passes": 2.0,
+          "spectral_mse": 0.11771846562623978,
+          "worst_decile_delta_e94": 98.90731048583984
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 2.474820613861084,
+          "median_delta_e94": 2.316410541534424,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 4.722656726837158,
+          "render_passes": 1.0,
+          "spectral_mse": 0.031158674508333206,
+          "worst_decile_delta_e94": 4.819584369659424
+        }
+      }
+    },
+    "spectral_product_narrowband": {
+      "results": {
+        "hadamard_k6": {
+          "latent_channels": 6.0,
+          "mean_delta_e94": 79.58361053466797,
+          "median_delta_e94": 77.19837951660156,
+          "output_wavelengths": 47.0,
+          "p95_delta_e94": 130.36683654785156,
+          "render_passes": 2.0,
+          "spectral_mse": 0.022521184757351875,
+          "worst_decile_delta_e94": 137.8018341064453
+        },
+        "rgb_baseline": {
+          "latent_channels": 3.0,
+          "mean_delta_e94": 7.483362674713135,
+          "median_delta_e94": 6.496847152709961,
+          "output_wavelengths": 3.0,
+          "p95_delta_e94": 16.081857681274414,
+          "render_passes": 1.0,
+          "spectral_mse": 0.013662370853126049,
+          "worst_decile_delta_e94": 17.831424713134766
+        }
+      }
+    }
+  }
+}

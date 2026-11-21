@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/home/user/eval/train/evaluate_predictions.py", line 160, in <module>
+    main()
+  File "/home/user/eval/train/evaluate_predictions.py", line 152, in main
+    scores = merge_scores(runs, contract)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/train/evaluate_predictions.py", line 129, in merge_scores
+    _, scored = score_run(run, contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/train/evaluate_predictions.py", line 102, in score_run
+    start, end = slice_bounds(len(pred_full))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/train/evaluate_predictions.py", line 62, in slice_bounds
+    raise ValueError(f"{SLICE} split requires at least two predictions, got {count}")
+ValueError: train split requires at least two predictions, got 0
+Traceback (most recent call last):
+  File "/home/user/eval/test/evaluate_predictions.py", line 199, in <module>
+    main()
+  File "/home/user/eval/test/evaluate_predictions.py", line 191, in main
+    scores = merge_scores(runs, contract)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/test/evaluate_predictions.py", line 160, in merge_scores
+    _, scored = score_run(run, contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/test/evaluate_predictions.py", line 133, in score_run
+    start, end = slice_bounds(len(pred_full))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/eval/test/evaluate_predictions.py", line 93, in slice_bounds
+    raise ValueError(f"{SLICE} split requires at least two predictions, got {count}")
+ValueError: test split requires at least two predictions, got 0

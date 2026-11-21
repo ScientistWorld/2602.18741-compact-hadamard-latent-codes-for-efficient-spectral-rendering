@@ -1,0 +1,23 @@
+{
+  "case": "weaker_one_epoch",
+  "candidate_method": "hadamard_k6",
+  "test_command": "bash scripts/evaluate_test.sh",
+  "hidden_arguments": [],
+  "evaluator_sha256": {
+    "scripts/evaluate_test.sh": "7a3a81d248e96ef3b5bc7e3d46c8905e64af036692b88a331b67407c68f3da56",
+    "eval/test/evaluate_predictions.py": "b7ff986a35c94ede7684fb60973b2c74961ec6cf6225bb4b93fdf77f22cbeeb2"
+  },
+  "training": {
+    "exit_code": 0,
+    "wall_seconds": 9.580144475912675
+  },
+  "train_evaluation": {
+    "exit_code": 0,
+    "wall_seconds": 1.516491701011546
+  },
+  "test_evaluation": {
+    "exit_code": 0,
+    "wall_seconds": 1.5668177959742025
+  },
+  "test_wrote_scores": true
+}

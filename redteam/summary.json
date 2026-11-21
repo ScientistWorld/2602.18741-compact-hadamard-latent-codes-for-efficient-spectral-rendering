@@ -1,0 +1,1158 @@
+{
+  "normalization": "Population standard deviation per experiment/metric over every successful attempt listed in cohort, ignoring missing values. Coefficient absolute values; metric direction from higher_is_better; experiment weight applied. Reference is the original reproduced hadamard_k6 test output. Future cohort scales are unknown.",
+  "cohort": [
+    "better_color",
+    "better_long",
+    "honest_rgb",
+    "honest_six_samples",
+    "reference",
+    "reference_seed1",
+    "reference_seed2",
+    "reference_seed3",
+    "shortcut_constant_zero",
+    "shortcut_copy_input",
+    "shortcut_forged_fields",
+    "shortcut_full_spectral",
+    "shortcut_ground_truth",
+    "shortcut_metadata",
+    "shortcut_null",
+    "shortcut_null_zero_cost",
+    "shortcut_omitted",
+    "shortcut_target_copy",
+    "shortcut_test_size",
+    "shortcut_unlisted_name",
+    "weaker_one_epoch"
+  ],
+  "scales": {
+    "spectral_product_broadband": {
+      "mean_delta_e94": 17.770355769214845,
+      "median_delta_e94": 17.380560876886573,
+      "p95_delta_e94": 22.30603283097994,
+      "worst_decile_delta_e94": 22.78041898352815,
+      "spectral_mse": 0.02834948214565355,
+      "render_passes": 10.130177620109059,
+      "latent_channels": 9.532274960783383,
+      "output_wavelengths": 9.825062643855189
+    },
+    "spectral_product_narrowband": {
+      "mean_delta_e94": 22.701585053358272,
+      "median_delta_e94": 22.4484785589023,
+      "p95_delta_e94": 34.94795184425668,
+      "worst_decile_delta_e94": 36.85062323335088,
+      "spectral_mse": 0.03792449339269018,
+      "render_passes": 10.130177620109059,
+      "latent_channels": 9.532274960783383,
+      "output_wavelengths": 9.825062643855189
+    },
+    "multibounce_narrowband": {
+      "mean_delta_e94": 12.443143645177516,
+      "median_delta_e94": 11.025955597529281,
+      "p95_delta_e94": 23.011059529618823,
+      "worst_decile_delta_e94": 24.392628756157592,
+      "spectral_mse": 0.010731439312293863,
+      "render_passes": 10.130177620109059,
+      "latent_channels": 9.532274960783383,
+      "output_wavelengths": 9.825062643855189
+    }
+  },
+  "attempts": {
+    "better_color": {
+      "rank_gain": 0.09043967646425086,
+      "pairwise_rank_gain": 3.6249999999999996,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 0.013985431333573712,
+          "median_delta_e94": 0.0039588071939573935,
+          "p95_delta_e94": 0.005166549352021532,
+          "worst_decile_delta_e94": 0.005969328638902486,
+          "spectral_mse": 8.360612475557973e-05,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.021007355498750286,
+          "median_delta_e94": 0.005967920698497982,
+          "p95_delta_e94": 0.012618538311190246,
+          "worst_decile_delta_e94": 0.01073853635815356,
+          "spectral_mse": -0.0008503336106296499,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.004626396942164912,
+          "median_delta_e94": 0.000498433280612786,
+          "p95_delta_e94": 0.005188878032047832,
+          "worst_decile_delta_e94": 0.005965178490078895,
+          "spectral_mse": -0.004484950179826701,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "better_long": {
+      "rank_gain": 0.021437694797225366,
+      "pairwise_rank_gain": 4.3149999999999995,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 0.003220735726016935,
+          "median_delta_e94": 0.0008015762168523413,
+          "p95_delta_e94": 0.0022219843229311534,
+          "worst_decile_delta_e94": 0.002388125749518255,
+          "spectral_mse": 0.00029225608707201384,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.004814104308039343,
+          "median_delta_e94": 0.002036255708353035,
+          "p95_delta_e94": 0.0019331473435935194,
+          "worst_decile_delta_e94": 0.001561394659552871,
+          "spectral_mse": 7.43144102652953e-05,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -9.341903500091128e-05,
+          "median_delta_e94": -0.0003306822355879429,
+          "p95_delta_e94": 0.000684913022824264,
+          "worst_decile_delta_e94": 0.0015784441558347258,
+          "spectral_mse": 0.0002545443569604665,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "honest_rgb": {
+      "rank_gain": -1.0132545868674092,
+      "pairwise_rank_gain": -4.954999999999999,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.009541731060368949,
+          "median_delta_e94": -0.0022247334390968617,
+          "p95_delta_e94": -0.012727595492247622,
+          "worst_decile_delta_e94": -0.012078142061958164,
+          "spectral_mse": -0.14644712680238947,
+          "render_passes": 0.006910046657133183,
+          "latent_channels": 0.011015208901545457,
+          "output_wavelengths": -0.07837100158150899
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.053163039649756966,
+          "median_delta_e94": -0.01292510521270311,
+          "p95_delta_e94": -0.04342237442328444,
+          "worst_decile_delta_e94": -0.04923601645834038,
+          "spectral_mse": -0.04785619339047052,
+          "render_passes": 0.006910046657133183,
+          "latent_channels": 0.011015208901545457,
+          "output_wavelengths": -0.07837100158150899
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.13306401008444269,
+          "median_delta_e94": -0.04868843449518721,
+          "p95_delta_e94": -0.09545495767261525,
+          "worst_decile_delta_e94": -0.0968176060321203,
+          "spectral_mse": -0.0769053890986263,
+          "render_passes": 0.005922897134685586,
+          "latent_channels": 0.009441607629896107,
+          "output_wavelengths": -0.067175144212722
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "honest_six_samples": {
+      "rank_gain": -1.3695928672876654,
+      "pairwise_rank_gain": -5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.1994156895298652,
+          "median_delta_e94": -0.060723844041968705,
+          "p95_delta_e94": -0.08953652662622698,
+          "worst_decile_delta_e94": -0.08814842137226209,
+          "spectral_mse": -0.13890104093349465,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.1350120722284396,
+          "median_delta_e94": -0.04210252530841206,
+          "p95_delta_e94": -0.07158433283516774,
+          "worst_decile_delta_e94": -0.07029837273150726,
+          "spectral_mse": -0.04320075698232521,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.13754519448604904,
+          "median_delta_e94": -0.05261446867851116,
+          "p95_delta_e94": -0.07737274137141978,
+          "worst_decile_delta_e94": -0.07457021900057542,
+          "spectral_mse": -0.08856666116144069,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "reference": {
+      "rank_gain": 0.0,
+      "pairwise_rank_gain": 0.0,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "reference_seed1": {
+      "rank_gain": -1.4173250270759125e-08,
+      "pairwise_rank_gain": -0.8500000000000001,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 1.4087478681227407e-08,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -5.05032784086238e-09,
+          "worst_decile_delta_e94": -1.813224719844392e-08,
+          "spectral_mse": -2.299603918270465e-09,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": 2.2303472139528544e-08,
+          "p95_delta_e94": -9.55094628233676e-09,
+          "worst_decile_delta_e94": -4.528905910607524e-09,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -3.2435090590468345e-09,
+          "p95_delta_e94": 2.7974816315851847e-09,
+          "worst_decile_delta_e94": -1.0556142513532376e-08,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "reference_seed2": {
+      "rank_gain": 0.0008587973165964483,
+      "pairwise_rank_gain": -1.835,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.0018016053861061297,
+          "median_delta_e94": -0.0005693369224736247,
+          "p95_delta_e94": -0.000567677050624295,
+          "worst_decile_delta_e94": -0.00043500085222121444,
+          "spectral_mse": -5.2351633001386267e-05,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.00036324262715593396,
+          "median_delta_e94": -0.0002779570215388745,
+          "p95_delta_e94": 0.0005217896850331925,
+          "worst_decile_delta_e94": 0.0009362788345235358,
+          "spectral_mse": -0.0001627471564135335,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.0013414606461579364,
+          "median_delta_e94": 0.0013913226719324938,
+          "p95_delta_e94": 5.6047544488809184e-05,
+          "worst_decile_delta_e94": 0.001289029035576837,
+          "spectral_mse": -0.0004472124515813644,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "reference_seed3": {
+      "rank_gain": -0.0050936448844600335,
+      "pairwise_rank_gain": -2.3749999999999996,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.0032264740256664217,
+          "median_delta_e94": -0.0009931705019710587,
+          "p95_delta_e94": -0.0011038451058494494,
+          "worst_decile_delta_e94": -0.0008367850759609885,
+          "spectral_mse": -0.00018627021698382594,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.00042795142303179973,
+          "median_delta_e94": -2.910603114208475e-06,
+          "p95_delta_e94": 0.0009543568176333655,
+          "worst_decile_delta_e94": 0.0008032784546467247,
+          "spectral_mse": -0.00046129663342702013,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.0006205282043647127,
+          "median_delta_e94": 0.0005926961408868052,
+          "p95_delta_e94": -0.000562489631662833,
+          "worst_decile_delta_e94": 0.0009568272306759733,
+          "spectral_mse": -0.0012201385150000087,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_constant_zero": {
+      "rank_gain": -8.835014355056835,
+      "pairwise_rank_gain": -5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -1.4765925737774275,
+          "median_delta_e94": -0.44284535711649436,
+          "p95_delta_e94": -0.6628179664581496,
+          "worst_decile_delta_e94": -0.6625849160599898,
+          "spectral_mse": -0.5739106936585787,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -1.16476325133855,
+          "median_delta_e94": -0.34362283507131075,
+          "p95_delta_e94": -0.6156982946482851,
+          "worst_decile_delta_e94": -0.6189637388602894,
+          "spectral_mse": -0.08464674917900215,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.7762633327253888,
+          "median_delta_e94": -0.28103366402811475,
+          "p95_delta_e94": -0.5123129884303707,
+          "worst_decile_delta_e94": -0.5055182662001739,
+          "spectral_mse": -0.11343972750471079,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_copy_input": {
+      "rank_gain": -5.836215433079617,
+      "pairwise_rank_gain": -5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.1927155344026342,
+          "median_delta_e94": -0.05508688148836326,
+          "p95_delta_e94": -0.11537159990402665,
+          "worst_decile_delta_e94": -0.1152428976902531,
+          "spectral_mse": -0.08341788090353304,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.9863068315869569,
+          "median_delta_e94": -0.3031348960269818,
+          "p95_delta_e94": -0.44288106577722064,
+          "worst_decile_delta_e94": -0.44060096783289854,
+          "spectral_mse": -0.6711569725665159,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.4559168633957429,
+          "median_delta_e94": -0.1528588526707896,
+          "p95_delta_e94": -0.26578478536780786,
+          "worst_decile_delta_e94": -0.2769389764023182,
+          "spectral_mse": -1.2788004270635742,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_forged_fields": {
+      "rank_gain": 0.0,
+      "pairwise_rank_gain": 0.0,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_full_spectral": {
+      "rank_gain": -0.896965580491704,
+      "pairwise_rank_gain": 4.854999999999999,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 0.03920164955061195,
+          "median_delta_e94": 0.011769239976603616,
+          "p95_delta_e94": 0.020618470126547366,
+          "worst_decile_delta_e94": 0.021243656750005342,
+          "spectral_mse": 0.007425681482239076,
+          "render_passes": -0.31095209957099323,
+          "latent_channels": -0.15054118832112123,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.062211148099399295,
+          "median_delta_e94": 0.017463099014349996,
+          "p95_delta_e94": 0.037106667929895025,
+          "worst_decile_delta_e94": 0.03544367281145849,
+          "spectral_mse": 0.008883481074953169,
+          "render_passes": -0.31095209957099323,
+          "latent_channels": -0.15054118832112123,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.0498797773741201,
+          "median_delta_e94": 0.017774893465372095,
+          "p95_delta_e94": 0.03313022248017776,
+          "worst_decile_delta_e94": 0.03459998179513709,
+          "spectral_mse": 0.024835028697752566,
+          "render_passes": -0.26653037106085137,
+          "latent_channels": -0.1290353042752468,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_ground_truth": {
+      "rank_gain": 0.42158667062862293,
+      "pairwise_rank_gain": 5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 0.03920164955061195,
+          "median_delta_e94": 0.011769239976603616,
+          "p95_delta_e94": 0.020618470126547366,
+          "worst_decile_delta_e94": 0.021243656750005342,
+          "spectral_mse": 0.007425681482239076,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.062211148099399295,
+          "median_delta_e94": 0.017463099014349996,
+          "p95_delta_e94": 0.037106667929895025,
+          "worst_decile_delta_e94": 0.03544367281145849,
+          "spectral_mse": 0.008883481074953169,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.0498797773741201,
+          "median_delta_e94": 0.017774893465372095,
+          "p95_delta_e94": 0.03313022248017776,
+          "worst_decile_delta_e94": 0.03459998179513709,
+          "spectral_mse": 0.024835028697752566,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_metadata": {
+      "rank_gain": 0.10243003176387794,
+      "pairwise_rank_gain": 0.6000000000000001,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": 0.013820093314266367,
+          "latent_channels": 0.022030417803090913,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": 0.013820093314266367,
+          "latent_channels": 0.022030417803090913,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.0,
+          "median_delta_e94": -0.0,
+          "p95_delta_e94": -0.0,
+          "worst_decile_delta_e94": -0.0,
+          "spectral_mse": -0.0,
+          "render_passes": 0.011845794269371173,
+          "latent_channels": 0.018883215259792214,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_null": {
+      "rank_gain": 0.0,
+      "pairwise_rank_gain": 0.0,
+      "terms": {
+        "spectral_product_broadband": {
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "spectral_product_narrowband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "multibounce_narrowband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ]
+      }
+    },
+    "shortcut_null_zero_cost": {
+      "rank_gain": 0.10243003176387794,
+      "pairwise_rank_gain": 0.6000000000000001,
+      "terms": {
+        "spectral_product_broadband": {
+          "render_passes": 0.013820093314266367,
+          "latent_channels": 0.022030417803090913,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "render_passes": 0.013820093314266367,
+          "latent_channels": 0.022030417803090913,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "render_passes": 0.011845794269371173,
+          "latent_channels": 0.018883215259792214,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "spectral_product_narrowband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "multibounce_narrowband": [
+          "mean_delta_e94",
+          "median_delta_e94",
+          "p95_delta_e94",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ]
+      }
+    },
+    "shortcut_omitted": {
+      "rank_gain": 0.0,
+      "pairwise_rank_gain": 0.0,
+      "terms": {
+        "spectral_product_broadband": {},
+        "spectral_product_narrowband": {},
+        "multibounce_narrowband": {}
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "spectral_product_narrowband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "multibounce_narrowband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ]
+      }
+    },
+    "shortcut_target_copy": {
+      "rank_gain": 0.42158667062862293,
+      "pairwise_rank_gain": 5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": 0.03920164955061195,
+          "median_delta_e94": 0.011769239976603616,
+          "p95_delta_e94": 0.020618470126547366,
+          "worst_decile_delta_e94": 0.021243656750005342,
+          "spectral_mse": 0.007425681482239076,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.062211148099399295,
+          "median_delta_e94": 0.017463099014349996,
+          "p95_delta_e94": 0.037106667929895025,
+          "worst_decile_delta_e94": 0.03544367281145849,
+          "spectral_mse": 0.008883481074953169,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.0498797773741201,
+          "median_delta_e94": 0.017774893465372095,
+          "p95_delta_e94": 0.03313022248017776,
+          "worst_decile_delta_e94": 0.03459998179513709,
+          "spectral_mse": 0.024835028697752566,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_test_size": {
+      "rank_gain": 0.0800672755389911,
+      "pairwise_rank_gain": 2.375,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.015298710706586885,
+          "median_delta_e94": -0.004947552965482769,
+          "p95_delta_e94": -0.004168055768375085,
+          "worst_decile_delta_e94": -0.003597704882720924,
+          "spectral_mse": 0.0009376301534179671,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": 0.002956972158644009,
+          "median_delta_e94": 0.0017611501857271992,
+          "p95_delta_e94": 0.008487703901611616,
+          "worst_decile_delta_e94": 0.007058000953891726,
+          "spectral_mse": 0.0036329453510663312,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": 0.015347117435958811,
+          "median_delta_e94": 0.003856603628405985,
+          "p95_delta_e94": 0.019551526388626436,
+          "worst_decile_delta_e94": 0.021625345221649966,
+          "spectral_mse": 0.022864304483156704,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    },
+    "shortcut_unlisted_name": {
+      "rank_gain": 0.0,
+      "pairwise_rank_gain": 0.0,
+      "terms": {
+        "spectral_product_broadband": {},
+        "spectral_product_narrowband": {},
+        "multibounce_narrowband": {}
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "spectral_product_narrowband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ],
+        "multibounce_narrowband": [
+          "latent_channels",
+          "mean_delta_e94",
+          "median_delta_e94",
+          "output_wavelengths",
+          "p95_delta_e94",
+          "render_passes",
+          "spectral_mse",
+          "worst_decile_delta_e94"
+        ]
+      }
+    },
+    "weaker_one_epoch": {
+      "rank_gain": -1.2838907855248123,
+      "pairwise_rank_gain": -5.455,
+      "terms": {
+        "spectral_product_broadband": {
+          "mean_delta_e94": -0.23455585323511213,
+          "median_delta_e94": -0.0729827844350753,
+          "p95_delta_e94": -0.0880358183414295,
+          "worst_decile_delta_e94": -0.0859707978256289,
+          "spectral_mse": -0.15406341497970125,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "spectral_product_narrowband": {
+          "mean_delta_e94": -0.08653665625974556,
+          "median_delta_e94": -0.027244166282390687,
+          "p95_delta_e94": -0.02729421673834788,
+          "worst_decile_delta_e94": -0.030000448731087974,
+          "spectral_mse": -0.011201862476663958,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        },
+        "multibounce_narrowband": {
+          "mean_delta_e94": -0.16089914044198517,
+          "median_delta_e94": -0.06730267350433228,
+          "p95_delta_e94": -0.07740645662004364,
+          "worst_decile_delta_e94": -0.07258023835077938,
+          "spectral_mse": -0.08781625730248852,
+          "render_passes": -0.0,
+          "latent_channels": -0.0,
+          "output_wavelengths": 0.0
+        }
+      },
+      "missing_metrics": {
+        "spectral_product_broadband": [],
+        "spectral_product_narrowband": [],
+        "multibounce_narrowband": []
+      }
+    }
+  },
+  "seed_metrics": {
+    "spectral_product_broadband": {
+      "mean_delta_e94": {
+        "values": [
+          1.9903628826141357,
+          2.0818355083465576,
+          2.154179573059082
+        ],
+        "spread": 0.1638166904449463
+      },
+      "median_delta_e94": {
+        "values": [
+          1.9481523036956787,
+          2.0423941612243652,
+          2.112550973892212
+        ],
+        "spread": 0.1643986701965332
+      },
+      "p95_delta_e94": {
+        "values": [
+          2.9201040267944336,
+          3.0005009174346924,
+          3.0764360427856445
+        ],
+        "spread": 0.15633201599121094
+      },
+      "worst_decile_delta_e94": {
+        "values": [
+          3.072633743286133,
+          3.1355485916137695,
+          3.193661689758301
+        ],
+        "spread": 0.12102794647216797
+      },
+      "spectral_mse": {
+        "values": [
+          0.001503673498518765,
+          0.001514274044893682,
+          0.0015413920627906919
+        ],
+        "spread": 3.771856427192688e-05
+      },
+      "render_passes": {
+        "values": [
+          2.0,
+          2.0,
+          2.0
+        ],
+        "spread": 0.0
+      },
+      "latent_channels": {
+        "values": [
+          6.0,
+          6.0,
+          6.0
+        ],
+        "spread": 0.0
+      },
+      "output_wavelengths": {
+        "values": [
+          47.0,
+          47.0,
+          47.0
+        ],
+        "spread": 0.0
+      }
+    },
+    "spectral_product_narrowband": {
+      "mean_delta_e94": {
+        "values": [
+          4.03511905670166,
+          4.058679580688477,
+          4.0628767013549805
+        ],
+        "spread": 0.027757644653320312
+      },
+      "median_delta_e94": {
+        "values": [
+          3.7335190773010254,
+          3.792949676513672,
+          3.7341461181640625
+        ],
+        "spread": 0.059430599212646484
+      },
+      "p95_delta_e94": {
+        "values": [
+          7.410299301147461,
+          7.306094646453857,
+          7.219709873199463
+        ],
+        "spread": 0.19058942794799805
+      },
+      "worst_decile_delta_e94": {
+        "values": [
+          7.463551998138428,
+          7.266394138336182,
+          7.294400691986084
+        ],
+        "spread": 0.1971578598022461
+      },
+      "spectral_mse": {
+        "values": [
+          0.0021390572655946016,
+          0.002178245224058628,
+          0.0022501330822706223
+        ],
+        "spread": 0.00011107581667602062
+      },
+      "render_passes": {
+        "values": [
+          2.0,
+          2.0,
+          2.0
+        ],
+        "spread": 0.0
+      },
+      "latent_channels": {
+        "values": [
+          6.0,
+          6.0,
+          6.0
+        ],
+        "spread": 0.0
+      },
+      "output_wavelengths": {
+        "values": [
+          47.0,
+          47.0,
+          47.0
+        ],
+        "spread": 0.0
+      }
+    },
+    "multibounce_narrowband": {
+      "mean_delta_e94": {
+        "values": [
+          2.9555296897888184,
+          2.8760440349578857,
+          2.9187614917755127
+        ],
+        "spread": 0.07948565483093262
+      },
+      "median_delta_e94": {
+        "values": [
+          2.6131362915039062,
+          2.4085936546325684,
+          2.5260019302368164
+        ],
+        "spread": 0.2045426368713379
+      },
+      "p95_delta_e94": {
+        "values": [
+          5.647121906280518,
+          5.637568950653076,
+          5.743000030517578
+        ],
+        "spread": 0.10543107986450195
+      },
+      "worst_decile_delta_e94": {
+        "values": [
+          6.251739025115967,
+          6.018827438354492,
+          6.078851699829102
+        ],
+        "spread": 0.2329115867614746
+      },
+      "spectral_mse": {
+        "values": [
+          0.0008883853442966938,
+          0.0009043827885761857,
+          0.0009320314857177436
+        ],
+        "spread": 4.364614142104983e-05
+      },
+      "render_passes": {
+        "values": [
+          2.0,
+          2.0,
+          2.0
+        ],
+        "spread": 0.0
+      },
+      "latent_channels": {
+        "values": [
+          6.0,
+          6.0,
+          6.0
+        ],
+        "spread": 0.0
+      },
+      "output_wavelengths": {
+        "values": [
+          47.0,
+          47.0,
+          47.0
+        ],
+        "spread": 0.0
+      }
+    }
+  },
+  "seed_ranks": [
+    -1.4173250270759125e-08,
+    0.0008587973165964483,
+    -0.0050936448844600335
+  ],
+  "seed_rank_spread": 0.005952442201056482,
+  "failed_evaluations": {
+    "shortcut_empty_rows": {
+      "case": "shortcut_empty_rows",
+      "candidate_method": "hadamard_k6",
+      "test_command": "bash scripts/evaluate_test.sh",
+      "hidden_arguments": [],
+      "evaluator_sha256": {
+        "scripts/evaluate_test.sh": "7a3a81d248e96ef3b5bc7e3d46c8905e64af036692b88a331b67407c68f3da56",
+        "eval/test/evaluate_predictions.py": "b7ff986a35c94ede7684fb60973b2c74961ec6cf6225bb4b93fdf77f22cbeeb2"
+      },
+      "candidate": {
+        "exit_code": 0,
+        "wall_seconds": 0.5149243620689958
+      },
+      "train_evaluation": {
+        "exit_code": 1,
+        "wall_seconds": 0.4647400180110708
+      },
+      "test_evaluation": {
+        "exit_code": 1,
+        "wall_seconds": 0.46481818798929453
+      },
+      "test_wrote_scores": false
+    }
+  }
+}
