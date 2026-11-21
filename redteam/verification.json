@@ -1,0 +1,19 @@
+{
+  "cases": 22,
+  "successful_hidden_evaluations": 21,
+  "expected_empty_array_failure": 1,
+  "seed_rank_spread": 0.005952442201056482,
+  "checks": [
+    "Python syntax and shell syntax",
+    "saved score/status completeness",
+    "unchanged evaluator hashes",
+    "reference restored exactly",
+    "forged scores overwritten",
+    "missing metrics and ties confirmed",
+    "scientific gains exceed seed spread",
+    "failed task outranks genuine improvements",
+    "public-answer and ground-truth shortcuts have zero errors",
+    "report links resolve",
+    "protected gym files equal initial git revision"
+  ]
+}

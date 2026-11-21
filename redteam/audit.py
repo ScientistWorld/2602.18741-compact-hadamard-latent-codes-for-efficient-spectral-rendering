@@ -105,6 +105,7 @@ def run_case(name):
                 if status["candidate"]["exit_code"]:
                     raise RuntimeError("Candidate failed")
             artifacts = out / "artifacts"
+            status["candidate_method"] = json.loads((candidate / "predictions.json").read_text())["method"]
             if artifacts.exists():
                 shutil.rmtree(artifacts)
             shutil.copytree(candidate, artifacts)

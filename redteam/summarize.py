@@ -64,15 +64,18 @@ def main():
         else:
             failures[folder.name] = status
     scales = standard_deviations(list(attempts.values()), schema)
+    quality_names = [name for name in attempts if not name.startswith("shortcut_")]
+    quality_scales = standard_deviations([attempts[name] for name in quality_names], schema)
     records = {}
     rows = []
     for name, attempt in attempts.items():
         score, terms = rank(attempt, reference, schema, scales)
         pair_scales = standard_deviations([reference, attempt], schema)
         pair_score, _ = rank(attempt, reference, schema, pair_scales)
+        quality_score, _ = rank(attempt, reference, schema, quality_scales)
         absent = {exp: sorted(set(config["metrics"]) - set(metrics(attempt, exp))) for exp, config in schema["experiments"].items()}
-        records[name] = {"rank_gain": score, "pairwise_rank_gain": pair_score, "terms": terms, "missing_metrics": absent}
-        row = {"attempt": name, "rank_gain": score, "pairwise_gain": pair_score}
+        records[name] = {"rank_gain": score, "pairwise_rank_gain": pair_score, "quality_cohort_rank_gain": quality_score, "terms": terms, "missing_metrics": absent}
+        row = {"attempt": name, "rank_gain": score, "pairwise_gain": pair_score, "quality_cohort_rank_gain": quality_score}
         for exp in schema["experiments"]:
             for key in schema["experiments"][exp]["metrics"]:
                 row[f"{exp}.{key}"] = metrics(attempt, exp).get(key)
@@ -87,6 +90,7 @@ def main():
     seed_ranks = [records[name]["rank_gain"] for name in seed_names if name in records]
     summary = {"normalization": "Population standard deviation per experiment/metric over every successful attempt listed in cohort, ignoring missing values. Coefficient absolute values; metric direction from higher_is_better; experiment weight applied. Reference is the original reproduced hadamard_k6 test output. Future cohort scales are unknown.",
                "cohort": sorted(attempts), "scales": scales, "attempts": records,
+               "quality_cohort": sorted(quality_names), "quality_cohort_scales": quality_scales,
                "seed_metrics": seed_summary, "seed_ranks": seed_ranks,
                "seed_rank_spread": max(seed_ranks) - min(seed_ranks) if seed_ranks else None,
                "failed_evaluations": failures}
