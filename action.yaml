@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Hardening: build real-spectra libraries (Munsell + CIE lamps), smoke test, train reference/variants/baselines, score shortcuts through hidden test, reproduce reference end to end"
+notes: "Rerun after preemption: rebuilt libraries with lamp-category broadband spectra; full hardening suite"

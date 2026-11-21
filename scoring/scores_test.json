@@ -1,74 +1,101 @@
 {
+  "_diagnostics": {
+    "methods": {
+      "hadamard_k6": {
+        "latent_channels": 6,
+        "render_passes": 2,
+        "status": "ok"
+      },
+      "rgb_baseline": {
+        "latent_channels": 3,
+        "render_passes": 1,
+        "status": "ok"
+      }
+    },
+    "slice": "test"
+  },
   "experiments": {
     "multibounce_narrowband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 2.9555296897888184,
-          "median_delta_e94": 2.613135814666748,
-          "output_wavelengths": 47.0,
-          "p95_delta_e94": 5.647122383117676,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0008883853442966938,
-          "worst_decile_delta_e94": 6.251737117767334
+          "mean_delta_e94": 3.2485395515163353,
+          "p95_delta_e94": 9.463587343727722,
+          "spectral_nrmse": 0.7125863536266247
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 10.839980125427246,
-          "median_delta_e94": 9.770956039428711,
-          "output_wavelengths": 3.0,
-          "p95_delta_e94": 21.917638778686523,
-          "render_passes": 1.0,
-          "spectral_mse": 0.0036394037306308746,
-          "worst_decile_delta_e94": 23.745336532592773
+          "mean_delta_e94": 6.25633429734924,
+          "p95_delta_e94": 17.447916908964956,
+          "spectral_nrmse": 1.0343515657410092
+        }
+      }
+    },
+    "multibounce_proxy": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94_1bounce": 2.9941953803068975,
+          "mean_delta_e94_2bounce": 2.0324036116938204,
+          "mean_delta_e94_3bounce": 1.131725702640402
+        },
+        "rgb_baseline": {
+          "mean_delta_e94_1bounce": 4.262048052766782,
+          "mean_delta_e94_2bounce": 3.55056061831859,
+          "mean_delta_e94_3bounce": 2.1905228973343145
+        }
+      }
+    },
+    "rendered_scenes": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94": 3.4984665737414558,
+          "p95_delta_e94": 9.017269081182652,
+          "spectral_nrmse": 0.5136947078409769
+        },
+        "rgb_baseline": {
+          "mean_delta_e94": 5.205902746842708,
+          "p95_delta_e94": 15.415178202437724,
+          "spectral_nrmse": 0.9378940616907242
+        }
+      }
+    },
+    "rgb_upsampling": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94": 7.086233595654367,
+          "p95_delta_e94": 18.945807908555825,
+          "spectral_nrmse": 0.7351861842437142
+        },
+        "rgb_baseline": {
+          "mean_delta_e94": 6.484567733328247,
+          "p95_delta_e94": 19.174477554273942,
+          "spectral_nrmse": 0.9598718892744493
         }
       }
     },
     "spectral_product_broadband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 1.990363597869873,
-          "median_delta_e94": 1.9481523036956787,
-          "output_wavelengths": 47.0,
-          "p95_delta_e94": 2.9201033115386963,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0015036730328574777,
-          "worst_decile_delta_e94": 3.0726311206817627
+          "mean_delta_e94": 2.481967930073619,
+          "p95_delta_e94": 6.594330679609861,
+          "spectral_nrmse": 0.4304698883655769
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 2.474820613861084,
-          "median_delta_e94": 2.316410541534424,
-          "output_wavelengths": 3.0,
-          "p95_delta_e94": 4.722656726837158,
-          "render_passes": 1.0,
-          "spectral_mse": 0.031158674508333206,
-          "worst_decile_delta_e94": 4.819584369659424
+          "mean_delta_e94": 2.6106782958813737,
+          "p95_delta_e94": 7.29819264330663,
+          "spectral_nrmse": 0.8957179048616586
         }
       }
     },
     "spectral_product_narrowband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 4.03511905670166,
-          "median_delta_e94": 3.7335238456726074,
-          "output_wavelengths": 47.0,
-          "p95_delta_e94": 7.410297393798828,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0021390572655946016,
-          "worst_decile_delta_e94": 7.463551044464111
+          "mean_delta_e94": 6.106696005499318,
+          "p95_delta_e94": 14.833697130476704,
+          "spectral_nrmse": 0.6957789898950314
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 7.483362674713135,
-          "median_delta_e94": 6.496847152709961,
-          "output_wavelengths": 3.0,
-          "p95_delta_e94": 16.081857681274414,
-          "render_passes": 1.0,
-          "spectral_mse": 0.013662370853126049,
-          "worst_decile_delta_e94": 17.831424713134766
+          "mean_delta_e94": 9.911486282704333,
+          "p95_delta_e94": 23.060066413558825,
+          "spectral_nrmse": 1.0124912532299433
         }
       }
     }

@@ -1,59 +1,101 @@
 {
+  "_diagnostics": {
+    "methods": {
+      "hadamard_k6": {
+        "latent_channels": 6,
+        "render_passes": 2,
+        "status": "ok"
+      },
+      "rgb_baseline": {
+        "latent_channels": 3,
+        "render_passes": 1,
+        "status": "ok"
+      }
+    },
+    "slice": "test"
+  },
   "experiments": {
     "multibounce_narrowband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 3.029766798019409,
-          "median_delta_e94": 2.6969690322875977,
-          "output_wavelengths": 47.0,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0009678913629613817
+          "mean_delta_e94": 3.2485395515163353,
+          "p95_delta_e94": 9.463587343727722,
+          "spectral_nrmse": 0.7125863536266247
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 10.939947128295898,
-          "median_delta_e94": 10.572619438171387,
-          "output_wavelengths": 3.0,
-          "render_passes": 1.0
+          "mean_delta_e94": 6.25633429734924,
+          "p95_delta_e94": 17.447916908964956,
+          "spectral_nrmse": 1.0343515657410092
+        }
+      }
+    },
+    "multibounce_proxy": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94_1bounce": 2.9941953803068975,
+          "mean_delta_e94_2bounce": 2.0324036116938204,
+          "mean_delta_e94_3bounce": 1.131725702640402
+        },
+        "rgb_baseline": {
+          "mean_delta_e94_1bounce": 4.262048052766782,
+          "mean_delta_e94_2bounce": 3.55056061831859,
+          "mean_delta_e94_3bounce": 2.1905228973343145
+        }
+      }
+    },
+    "rendered_scenes": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94": 3.4984665737414558,
+          "p95_delta_e94": 9.017269081182652,
+          "spectral_nrmse": 0.5136947078409769
+        },
+        "rgb_baseline": {
+          "mean_delta_e94": 5.205902746842708,
+          "p95_delta_e94": 15.415178202437724,
+          "spectral_nrmse": 0.9378940616907242
+        }
+      }
+    },
+    "rgb_upsampling": {
+      "results": {
+        "hadamard_k6": {
+          "mean_delta_e94": 7.086233595654367,
+          "p95_delta_e94": 18.945807908555825,
+          "spectral_nrmse": 0.7351861842437142
+        },
+        "rgb_baseline": {
+          "mean_delta_e94": 6.484567733328247,
+          "p95_delta_e94": 19.174477554273942,
+          "spectral_nrmse": 0.9598718892744493
         }
       }
     },
     "spectral_product_broadband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 2.0155298709869385,
-          "median_delta_e94": 1.9986302852630615,
-          "output_wavelengths": 47.0,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0015065115876495838
+          "mean_delta_e94": 2.481967930073619,
+          "p95_delta_e94": 6.594330679609861,
+          "spectral_nrmse": 0.4304698883655769
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 2.5220134258270264,
-          "median_delta_e94": 2.35874080657959,
-          "output_wavelengths": 3.0,
-          "render_passes": 1.0
+          "mean_delta_e94": 2.6106782958813737,
+          "p95_delta_e94": 7.29819264330663,
+          "spectral_nrmse": 0.8957179048616586
         }
       }
     },
     "spectral_product_narrowband": {
       "results": {
         "hadamard_k6": {
-          "latent_channels": 6.0,
-          "mean_delta_e94": 4.073190212249756,
-          "median_delta_e94": 3.729036808013916,
-          "output_wavelengths": 47.0,
-          "render_passes": 2.0,
-          "spectral_mse": 0.0022566167172044516
+          "mean_delta_e94": 6.106696005499318,
+          "p95_delta_e94": 14.833697130476704,
+          "spectral_nrmse": 0.6957789898950314
         },
         "rgb_baseline": {
-          "latent_channels": 3.0,
-          "mean_delta_e94": 7.624309062957764,
-          "median_delta_e94": 7.2457709312438965,
-          "output_wavelengths": 3.0,
-          "render_passes": 1.0
+          "mean_delta_e94": 9.911486282704333,
+          "p95_delta_e94": 23.060066413558825,
+          "spectral_nrmse": 1.0124912532299433
         }
       }
     }
