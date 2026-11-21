@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: secondary_claims
-notes: "Final hardening suite: fixed val split, broadband upsampling test, 5 seeds, separate-upsampler and combined better variants, shortcuts, fresh reference reproduction"
+notes: "Hardening suite v3: reference = best-of-5 restarts by validation loss, 3 disjoint restart sets for noise, variants on same protocol, shortcuts, fresh reproduction"
