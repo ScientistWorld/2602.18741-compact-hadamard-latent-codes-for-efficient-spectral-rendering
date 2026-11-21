@@ -17,5 +17,8 @@
 - Official `k=6` scores support the core claim across all reference-matched settings: broadband DeltaE94 2.016 vs RGB 2.522, narrowband 4.073 vs RGB 7.624, and three-bounce narrowband 3.030 vs RGB 10.940 with spectral MSE 9.68e-4.
 - Secondary diagnostics also ran: `k=9` improved all three product settings at a three-pass cost, and the RGB-to-latent upsampler improved narrowband DeltaE94 to 6.334 vs RGB 7.624. These diagnostics are stored in `scoring/extra_scores.json` because the paper text available here does not provide exact reference targets for them.
 
+### [2026-11-21] - secondary_claims
+- Hardening: real Munsell/CIE spectra, evaluator-owned latent rendering with hidden test spectra, 2-pass gate, worst-value failures, rendered-scene and RGB-upsampling experiments. Core claim (k=6 beats RGB, strongly under narrowband, stable over bounces and in scenes) reproduced; the RGB-upsampling secondary claim is not (see HARDENING.md).
+
 ## Stop Justification
 - Completed at milestone `secondary_claims`.

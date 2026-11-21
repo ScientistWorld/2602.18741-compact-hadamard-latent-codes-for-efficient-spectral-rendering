@@ -55,3 +55,8 @@
 - Evaluation hardening: continuing audit found that the evaluator trusted candidate-provided target spectra. The evaluator now regenerates fixed held-out targets from `data/` for every registered experiment and ignores any `target_spectrum` fields included in method artifacts for preview/debugging.
 - Scoring contract hardening: secondary diagnostics that do not have a paper reference target are no longer mixed into `scoring/scores.json`; they are preserved separately so automated comparison remains valid.
 - Preprocessing fidelity: the procedural substitute now follows the paper's 47-sample spectra with energy outside 400-700 nm zeroed before normalization.
+
+## Hardening (iteration 11)
+
+- The gym now scores submitted codecs (`outputs/<name>/codec.json`): the hidden evaluator renders held-out *measured* spectra (Munsell chips, CIE and lamp-category lights) in the method's code space, enforces the two-pass budget from the networks' shapes, and gives failures the worst value everywhere. See HARDENING.md.
+- Reference (k=6, paper settings, best of 5 validation-selected restarts), held-out mean CIE94 vs RGB rendering: broadband 2.51 vs 2.61, narrowband 6.21 vs 9.91, narrowband 3-bounce 3.29 vs 6.26, rendered scenes 3.52 vs 5.21; paper proxy 3.04/2.07/1.16 (paper 2.16/1.79/1.74). RGB-asset upsampling with the paper's single network is not reproduced (4.11 vs 2.68); separate upsamplers reach 2.59.

@@ -1,5 +1,5 @@
 {
-  "_note": "Experiments run on measured Munsell reflectances and CIE/synthetic illuminants (the paper's LSPDD lamps need an account), rendered by the evaluator in each method's latent space. The paper reports no number on this exact protocol except the multi-bounce selection proxy; results.hadamard_k6 therefore holds this gym's reproduced held-out value where the paper has none, and the paper's own figures are kept under _paper_reported.",
+  "_note": "Experiments run on measured Munsell reflectances (the paper's source) and CIE plus synthetic lamp, blackbody, flipped and narrowband illuminants (the paper's LSPDD lamps need an account), rendered by the evaluator in each method's code space. The paper's own numbers are kept in multibounce_proxy.results and under _paper_reported; elsewhere results.hadamard_k6 is the reproduced held-out value.",
   "experiments": {
     "spectral_product_broadband": {
       "description": "Single reflectance x light product under held-out broadband lights, exposed for the light. Paper: one-interaction accuracy of the k=6 two-pass code (Figs. 1, 4).",
@@ -24,14 +24,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
-          "mean_delta_e94": 0.0
+          "mean_delta_e94": 2.5135,
+          "p95_delta_e94": 6.5237,
+          "spectral_nrmse": 0.4308
         }
-      }
+      },
+      "_note": "The paper reports no number on this protocol; results.hadamard_k6 is this gym's reproduced held-out value of the paper's method (k=6, two passes)."
     },
     "spectral_product_narrowband": {
       "description": "Single product under held-out spiky narrowband lights, the paper's stress case where RGB rendering shows large colour shifts (Figs. 1, 5).",
@@ -56,14 +58,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
-          "mean_delta_e94": 0.0
+          "mean_delta_e94": 6.2111,
+          "p95_delta_e94": 15.3185,
+          "spectral_nrmse": 0.6942
         }
-      }
+      },
+      "_note": "The paper reports no number on this protocol; results.hadamard_k6 is this gym's reproduced held-out value of the paper's method (k=6, two passes)."
     },
     "multibounce_narrowband": {
       "description": "Three-reflectance chains under narrowband lights (Fig. 9 stress setting): repeated per-channel products in the code space.",
@@ -88,14 +92,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
-          "mean_delta_e94": 0.0
+          "mean_delta_e94": 3.2846,
+          "p95_delta_e94": 9.3246,
+          "spectral_nrmse": 0.7118
         }
-      }
+      },
+      "_note": "The paper reports no number on this protocol; results.hadamard_k6 is this gym's reproduced held-out value of the paper's method (k=6, two passes)."
     },
     "multibounce_proxy": {
       "description": "The paper's model-selection protocol (Sec. 4.5): held-out light x reflectance chains S1, S2, S3 with newly sampled reflectances, mean CIE94 per bounce, without re-exposure. 3,000 chains instead of 500; lights drawn half broadband, half narrowband.",
@@ -127,14 +133,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94_3bounce": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
+          "mean_delta_e94_1bounce": 2.16,
+          "mean_delta_e94_2bounce": 1.79,
           "mean_delta_e94_3bounce": 1.74
         }
-      }
+      },
+      "_note": "results.hadamard_k6 are the paper's reported values (Sec. 4.5, 500 pairs, Munsell + LSPDD lamps). This gym's reproduction on substitute lamps: 3.036 / 2.068 / 1.155; the error decreases with bounces as in the paper."
     },
     "rendered_scenes": {
       "description": "Path-traced-style pixels: each pixel sums 30 weighted light paths of depth 1-8 from two lights (broadband or narrowband, random intensity) over ten held-out materials; per-scene auto-exposure. Exercises scaling, addition and products together as in the paper's rendered scenes and unbounded-depth tests (Figs. 4-9).",
@@ -170,14 +178,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
-          "mean_delta_e94": 0.0
+          "mean_delta_e94": 3.5236,
+          "p95_delta_e94": 8.9708,
+          "spectral_nrmse": 0.5141
         }
-      }
+      },
+      "_note": "The paper reports no number on this protocol; results.hadamard_k6 is this gym's reproduced held-out value of the paper's method (k=6, two passes)."
     },
     "rgb_upsampling": {
       "description": "Legacy-RGB assets under broadband lights, the setting of the paper's RGB-asset scenes (Figs. 3-4): only each held-out asset's linear-sRGB value is given to the method's upsampler; the decoded product is compared with the true spectral product (Sec. 5).",
@@ -202,14 +212,16 @@
       },
       "results": {
         "rgb_baseline": {
-          "type": "baseline",
-          "mean_delta_e94": 0.0
+          "type": "baseline"
         },
         "hadamard_k6": {
           "type": "proposed",
-          "mean_delta_e94": 0.0
+          "mean_delta_e94": 4.1132,
+          "p95_delta_e94": 7.4868,
+          "spectral_nrmse": 0.5942
         }
-      }
+      },
+      "_note": "The paper reports no number on this protocol; results.hadamard_k6 is this gym's reproduced held-out value of the paper's method (k=6, two passes)."
     }
   }
 }

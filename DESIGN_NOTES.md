@@ -24,3 +24,7 @@
 - `render_passes` and `latent_channels` are still declared by the candidate artifact because the evaluator cannot infer them from prediction JSON alone. A dishonest method can underreport these constraints unless a later runner adds artifact-level validation or a stricter output contract.
 - The held-out test slice currently rescoring the second half of each prediction artifact is lightweight and method-agnostic, but the underlying procedural data generator is visible in `data/`. This still detects narrow train-slice overfitting, but it is less resistant than a fully hidden challenge set.
 - Existing `scoring/scores.json` was not regenerated in this design-only iteration, so it does not contain the newly added tail metrics. The runner iteration should regenerate official scores through the normal evaluation path if those metrics are expected in current score artifacts.
+
+## Superseded (iteration 11)
+
+The runtime concerns above are resolved: methods now submit codecs that the hidden evaluator runs on held-out spectra stored only in eval/test/, the pass budget is measured from the submitted networks, and the old prediction-file evaluators were removed. See HARDENING.md.

@@ -1,8 +1,6 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: secondary_claims
-notes: "Hardening suite v3: reference = best-of-5 restarts by validation loss, 3 disjoint restart sets for noise, variants on same protocol, shortcuts, fresh reproduction"
+notes: "Hardened: codec submissions rendered by the evaluator on hidden measured spectra, 2-pass gate, worst-value failures, all shortcuts closed; reference best-of-5 restarts; better variants beat reference by 4-6x noise. See HARDENING.md."
