@@ -1,2 +1,8 @@
-action: done
-notes: "Audit complete: 22 hidden-test runs, genuine improvements above seed spread, major scoring shortcuts validated; report and evidence committed, gym files restored."
+# Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends.
+action: pending
+gpus: 0
+test: false
+milestone: secondary_claims
+notes: ""
