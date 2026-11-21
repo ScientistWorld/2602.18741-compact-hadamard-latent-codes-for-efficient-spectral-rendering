@@ -208,9 +208,12 @@ def smoke() -> None:
 
 def run_parallel(jobs, workers: int) -> None:
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = [pool.submit(fn, *a) for fn, *a in jobs]
-        for fut in futures:
-            log(fut.result())
+        futures = [(a, pool.submit(fn, *a)) for fn, *a in jobs]
+        for a, fut in futures:
+            try:
+                log(fut.result())
+            except Exception as exc:  # the attempt then has no codec and scores as failed
+                log(f"FAILED {a[0]}: {exc}")
 
 
 def install(cases: list[str]) -> None:

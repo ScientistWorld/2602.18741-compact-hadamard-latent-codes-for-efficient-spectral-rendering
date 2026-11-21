@@ -11,8 +11,9 @@ the public sources allow:
   Total 1,449, split 1,013 / 436 with angular-ring stratification in CIELAB
   a*b* (180 angular bins, per-bin radial quantile rings).
 * Illuminants: measured / standard lamp tables (CIE FL, HP, LED, A, D65,
-  ID65; the paper used the LSPDD database, which needs an account),
-  simulated CIE daylight, 82 synthetic blackbody broadband spectra,
+  ID65) plus 300 synthetic lamp-like spectra (phosphor white LEDs,
+  triband fluorescents, metal halides) standing in for the paper's LSPDD
+  lamp database, which needs an account; simulated CIE daylight, 82 synthetic blackbody broadband spectra,
   vertically flipped broadband spectra, and 367 synthetic narrowband spectra,
   greedily filtered at cosine similarity 0.95, normalised to unit peak and
   split 70/30 with 36 angular bins.
@@ -239,6 +240,43 @@ def narrowband(rng: np.random.Generator, count: int) -> np.ndarray:
     return resample(FINE, np.asarray(out))
 
 
+def _gauss(center: float, fwhm: float) -> np.ndarray:
+    return np.exp(-0.5 * ((FINE - center) / (fwhm / 2.3548)) ** 2)
+
+
+def synthetic_lamps(rng: np.random.Generator) -> tuple[np.ndarray, list[str]]:
+    """Lamp-like broadband spectra standing in for the LSPDD categories.
+
+    Phosphor-converted white LEDs (blue pump + one or two broad phosphor bands),
+    triband / halophosphate fluorescent lamps (mercury and rare-earth lines over
+    a weak continuum) and metal-halide lamps (many lines over a continuum).
+    """
+    spectra, names = [], []
+    for _ in range(200):
+        spec = _gauss(rng.uniform(440.0, 465.0), rng.uniform(16.0, 26.0))
+        if rng.random() < 0.6:
+            spec = spec + rng.uniform(0.4, 2.5) * _gauss(rng.uniform(545.0, 600.0), rng.uniform(100.0, 150.0))
+        else:
+            spec = spec + rng.uniform(0.3, 1.5) * _gauss(rng.uniform(520.0, 550.0), rng.uniform(60.0, 100.0))
+            spec = spec + rng.uniform(0.3, 1.5) * _gauss(rng.uniform(600.0, 650.0), rng.uniform(60.0, 100.0))
+        spectra.append(spec)
+        names.append("synthetic_led")
+    for _ in range(60):
+        spec = rng.uniform(0.02, 0.2) * _gauss(rng.uniform(500.0, 600.0), rng.uniform(150.0, 250.0))
+        spec = spec + rng.uniform(0.0, 0.5) * _gauss(rng.uniform(440.0, 480.0), rng.uniform(30.0, 60.0))
+        for line in (405.0, 436.0, 487.0, 546.0, 578.0, 611.0):
+            spec = spec + rng.uniform(0.05, 1.0) * _gauss(line + rng.uniform(-2.0, 2.0), rng.uniform(3.0, 10.0))
+        spectra.append(spec)
+        names.append("synthetic_fluorescent")
+    for _ in range(40):
+        spec = rng.uniform(0.3, 1.0) * _gauss(rng.uniform(500.0, 600.0), rng.uniform(100.0, 200.0))
+        for _ in range(int(rng.integers(10, 21))):
+            spec = spec + rng.uniform(0.05, 0.6) * _gauss(rng.uniform(400.0, 700.0), rng.uniform(2.0, 6.0))
+        spectra.append(spec)
+        names.append("synthetic_metal_halide")
+    return resample(FINE, np.asarray(spectra)), names
+
+
 def flip(spectra: np.ndarray) -> np.ndarray:
     s = unit_peak(spectra)
     return unit_peak((1.0 - s) * MASK)
@@ -272,8 +310,11 @@ def build_illuminants(rng: np.random.Generator) -> tuple[np.ndarray, list[str], 
         lamps.append(resample(raw[:, 0], raw[:, 1]))
         lamp_names.append(label)
     lamps_arr = np.concatenate(lamps)
+    synth, synth_names = synthetic_lamps(rng)
     groups.append(("broadband", "lamp", lamps_arr))
-    groups.append(("broadband", "lamp_flipped", flip(lamps_arr)))
+    for source in ("synthetic_led", "synthetic_fluorescent", "synthetic_metal_halide"):
+        groups.append(("broadband", source, synth[[i for i, n in enumerate(synth_names) if n == source]]))
+    groups.append(("broadband", "lamp_flipped", flip(np.concatenate([lamps_arr, synth]))))
     bb = blackbody(np.geomspace(1500.0, 20000.0, 82))
     groups.append(("broadband", "blackbody", bb))
     groups.append(("broadband", "blackbody_flipped", flip(bb)))
