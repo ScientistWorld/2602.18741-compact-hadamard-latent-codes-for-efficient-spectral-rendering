@@ -1,0 +1,4 @@
+{
+  "initial_commit": "41d79ab4432ca3cd4b61ff912b90c6e4516807b8",
+  "initial_status": " M README.md\n M manifest.json\n D trajectory/session.json\n D trajectory/turn_0001_raw.jsonl\n D trajectory/turn_0002_raw.jsonl\n D trajectory/turn_0003_raw.jsonl\n D trajectory/turn_0004_raw.jsonl\n D trajectory/turn_0005_raw.jsonl\n?? .git-shims/\n?? redteam/\n"
+}

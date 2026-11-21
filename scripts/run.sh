@@ -1,9 +1,12 @@
 #!/bin/bash
-# Compute-node entry point for the train/test evaluation split.
+# Temporary audit job. Restored after the audit completes.
 
 set -euo pipefail
 
 cd /home/user
 
-bash scripts/evaluate_train.sh
-bash scripts/evaluate_test.sh
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+python redteam/data_checks.py
+python redteam/audit.py suite
