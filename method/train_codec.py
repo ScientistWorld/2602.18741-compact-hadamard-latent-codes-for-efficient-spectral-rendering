@@ -6,7 +6,8 @@ encoder/decoder shared by reflectances and illuminants, blockwise Hadamard
 products, loss weights lambda_e2e = 0.5, lambda_rec = 0.75, lambda_code = 1.0,
 lambda_col = 0.5 (the selected configuration), Adam with lr 1e-3, batch 128,
 up to 150 epochs with early stopping (patience 15) on a validation subset drawn
-randomly from the training spectra, and scaling augmentation of the lights.
+once at random from the training spectra (shared by all runs), and scaling
+augmentation of the lights.
 An epoch is one pass over all training reflectance-illuminant pairs.
 
 Optional flags (off by default) implement variants that go beyond the paper.
@@ -39,7 +40,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--patience", type=int, default=15, help="early-stopping patience in epochs (0 disables)")
     p.add_argument("--batch-size", type=int, default=128)
     p.add_argument("--lr", type=float, default=1e-3)
-    p.add_argument("--seed", type=int, default=260218741)
+    p.add_argument("--seed", type=int, default=260218741, help="optimisation seed (initialisation, pair order, augmentation)")
+    p.add_argument("--split-seed", type=int, default=20260221, help="seed of the one-off validation draw, shared by all runs")
     p.add_argument("--lambda-e2e", type=float, default=0.5)
     p.add_argument("--lambda-rec", type=float, default=0.75)
     p.add_argument("--lambda-code", type=float, default=1.0)
@@ -71,8 +73,12 @@ class Trainer:
             keep = [i for i, s in enumerate(extra.reflectance_source) if s == "munsell"]
             refl = np.concatenate([refl, extra.reflectances[keep]])
         illum = lib.illuminants
-        r_perm = self.rng.permutation(len(refl))
-        l_perm = self.rng.permutation(len(illum))
+        # The validation subset is drawn once from the training spectra and is the
+        # same for every run ("all runs used the same data"); only the optimisation
+        # randomness depends on --seed.
+        split_rng = np.random.default_rng(args.split_seed)
+        r_perm = split_rng.permutation(len(refl))
+        l_perm = split_rng.permutation(len(illum))
         n_rv = int(round(args.val_fraction * len(refl)))
         n_lv = int(round(args.val_fraction * len(illum)))
         as_t = lambda x: torch.as_tensor(np.asarray(x), dtype=torch.float32)  # noqa: E731

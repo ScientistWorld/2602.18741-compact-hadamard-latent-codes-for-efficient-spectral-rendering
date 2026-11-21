@@ -19,7 +19,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 REFERENCE = "reference"
-SEEDS = ["reference", "reference_seed2", "reference_seed3"]
+SEEDS = ["reference", "reference_seed2", "reference_seed3", "reference_seed4", "reference_seed5"]
 
 
 def load():
@@ -58,6 +58,9 @@ def main() -> None:
     seed_spread_honest = max(seed_vals) - min(seed_vals) if seed_vals else None
     seed_vals_main = [main_gain[s] for s in SEEDS if s in main_gain]
     seed_spread_main = max(seed_vals_main) - min(seed_vals_main) if seed_vals_main else None
+    seed_mean_honest = float(np.mean(seed_vals)) if seed_vals else None
+    seed_std_honest = float(np.std(seed_vals)) if seed_vals else None
+    vs_seed_mean = {c: honest_gain[c] - seed_mean_honest for c in honest}
     diag = test.get("_diagnostics", {}).get("methods", {})
     summary = {
         "cases": cases,
@@ -68,6 +71,9 @@ def main() -> None:
         "gain_all_cohort_train_slice": train_main,
         "seed_spread_honest_cohort": seed_spread_honest,
         "seed_spread_all_cohort": seed_spread_main,
+        "seed_mean_gain_honest_cohort": seed_mean_honest,
+        "seed_std_gain_honest_cohort": seed_std_honest,
+        "gain_honest_minus_seed_mean": vs_seed_mean,
         "status": {c: diag.get(c, {}).get("status") for c in cases},
         "errors": {c: diag[c].get("error") or diag[c].get("upsampling_error") for c in cases if c in diag and (diag[c].get("error") or diag[c].get("upsampling_error"))},
     }
@@ -75,7 +81,7 @@ def main() -> None:
 
     exps = list(ref)
     lines = ["# Hardening suite summary", ""]
-    lines.append(f"Seed spread of rank gain: honest cohort {seed_spread_honest:.4f}, all cohort {seed_spread_main:.4f}.")
+    lines.append(f"Seed spread (max-min over {len(seed_vals)} seeds) of rank gain: honest cohort {seed_spread_honest:.4f}, all cohort {seed_spread_main:.4f}; honest-cohort seed mean {seed_mean_honest:+.4f}, std {seed_std_honest:.4f}.")
     lines.append("")
     header = "| case | status | gain (all) | gain (honest) | pairwise | " + " | ".join(f"{e} {ref[e]['primary_metric']}" for e in exps) + " |"
     lines += [header, "|" + "---|" * (5 + len(exps))]

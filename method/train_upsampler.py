@@ -75,6 +75,7 @@ def main(argv=None) -> None:
     p.add_argument("--seed", type=int, default=260218741)
     p.add_argument("--threads", type=int, default=1)
     p.add_argument("--train-file", default=str(TRAIN_FILE))
+    p.add_argument("--separate", action="store_true", help="variant: separate networks for reflectances and illuminants")
     args = p.parse_args(argv)
 
     torch.manual_seed(args.seed)
@@ -88,19 +89,46 @@ def main(argv=None) -> None:
     k = enc_r.shape[0]
 
     lib = load_library(args.train_file)
-    rgb = np.concatenate([asset_rgb(lib.reflectances, "reflectance", lib), asset_rgb(lib.illuminants, "illuminant", lib)])
-    z = np.concatenate([np.clip(lib.reflectances @ enc_r.T, 0, None), np.clip(lib.illuminants @ enc_l.T, 0, None)])
+    rgb_r = asset_rgb(lib.reflectances, "reflectance", lib)
+    rgb_l = asset_rgb(lib.illuminants, "illuminant", lib)
+    z_r = np.clip(lib.reflectances @ enc_r.T, 0, None)
+    z_l = np.clip(lib.illuminants @ enc_l.T, 0, None)
+    ctx = {
+        "dec": torch.as_tensor(dec, dtype=torch.float32),
+        "xyz": torch.as_tensor(xyz_matrix(lib), dtype=torch.float32),
+        "white": torch.as_tensor(xyz_matrix(lib) @ lib.visible_mask, dtype=torch.float32),
+    }
+    start = time.time()
+    if args.separate:
+        # Variant beyond the paper (its suggested future work): one network per asset type.
+        model_r, hist_r = fit(rgb_r, z_r, k, args, rng, ctx)
+        model_l, hist_l = fit(rgb_l, z_l, k, args, rng, ctx)
+        codec.pop("upsampler", None)
+        codec["upsampler_reflectance"] = model_r.export()
+        codec["upsampler_illuminant"] = model_l.export()
+        history = {"reflectance": hist_r, "illuminant": hist_l}
+        final = {"reflectance": hist_r[-1], "illuminant": hist_l[-1]}
+    else:
+        # Paper: a single network for reflectances and illuminants.
+        model, history = fit(np.concatenate([rgb_r, rgb_l]), np.concatenate([z_r, z_l]), k, args, rng, ctx)
+        for key in ("upsampler_reflectance", "upsampler_illuminant"):
+            codec.pop(key, None)
+        codec["upsampler"] = model.export()
+        final = history[-1]
+    codec_path.write_text(json.dumps(codec))
+    log = {"config": vars(args), "seconds": time.time() - start, "history": history}
+    (Path(args.codec_dir) / "upsampler_log.json").write_text(json.dumps(log, indent=2))
+    print(json.dumps({"final_loss": final, "seconds": log["seconds"]}, indent=2))
+
+
+def fit(rgb: np.ndarray, z: np.ndarray, k: int, args, rng: np.random.Generator, ctx: dict):
     x_t = torch.as_tensor(rgb, dtype=torch.float32)
     z_t = torch.as_tensor(z, dtype=torch.float32)
-    dec_t = torch.as_tensor(dec, dtype=torch.float32)
-    xyz_t = torch.as_tensor(xyz_matrix(lib), dtype=torch.float32)
-    white = torch.as_tensor(xyz_matrix(lib) @ lib.visible_mask, dtype=torch.float32)
-
+    dec_t, xyz_t, white = ctx["dec"], ctx["xyz"], ctx["white"]
     model = RGBToLatentUpsampler(k, args.hidden)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode="min", factor=0.5, patience=200, min_lr=1e-6)
     n = len(x_t)
-    start = time.time()
     history = []
     for epoch in range(args.epochs):
         perm = torch.as_tensor(rng.permutation(n))
@@ -125,12 +153,7 @@ def main(argv=None) -> None:
         sched.step(epoch_loss)
         if epoch % 100 == 0 or epoch == args.epochs - 1:
             history.append({"epoch": epoch, "loss": epoch_loss, "lr": opt.param_groups[0]["lr"]})
-
-    codec["upsampler"] = model.export()
-    codec_path.write_text(json.dumps(codec))
-    log = {"config": vars(args), "seconds": time.time() - start, "history": history}
-    (Path(args.codec_dir) / "upsampler_log.json").write_text(json.dumps(log, indent=2))
-    print(json.dumps({"final_loss": history[-1], "seconds": log["seconds"]}, indent=2))
+    return model, history
 
 
 if __name__ == "__main__":

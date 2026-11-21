@@ -2,20 +2,32 @@
 
 ## Research Problem
 
-This benchmark asks how to make spectral rendering practical in RGB-oriented rendering pipelines. The goal is not to improve a particular scene, but to represent wavelength-dependent reflectance and illumination compactly enough that rendered images stay close to full spectral ground truth while using only a small number of RGB-equivalent passes.
+Make spectral rendering practical in RGB-oriented pipelines: represent
+reflectance and illumination spectra compactly enough to render them through
+at most two ordinary RGB passes, while the decoded result stays close to full
+47-sample spectral rendering, including under spiky narrowband lights, after
+several light-material interactions, in scenes where many light paths are
+scaled and summed, and for assets that exist only as RGB values.
 
 ## Core Contribution
 
-The paper's contribution is a compact renderer-compatible spectral representation that preserves the operations needed during rendering well enough to approximate full spectral results. Future work should improve this same class of contribution: compact spectral representations and their composition behavior under rendering-like operations.
+The contribution being studied is a compact, renderer-compatible spectral
+representation whose behaviour under the renderer's operations (per-channel
+multiplication, scaling, addition) approximates the true spectral algebra
+well. Improvements should be of this kind.
 
 ## Approach Scope
 
-Scientists may change the representation, training objective, basis construction, regularization, RGB-asset conversion strategy, or compact decoding procedure. They may also improve how compact representations are composed during rendering, provided the main result remains a compact spectral rendering method evaluated under the same two-pass budget.
+You may change how the representation is constructed or learned, the
+training objectives and data combinations drawn from the provided spectra,
+separate treatment of reflectances and lights, the decoder (linear or not,
+as long as it works from the rendered code alone), the RGB-to-code
+upsamplers, and regularisation for physical plausibility or smoothness.
 
 ## Out of Bounds
 
-- Replacing the benchmark with full spectral rendering as the main method.
-- Using a scene-specific neural renderer that directly maps camera rays or pixels to final RGB images.
-- Optimizing per-scene color correction or lookup tables against the evaluation images.
-- Improving scores only by adding external spectra, external scenes, or more render passes.
-- Changing the problem to a general RGB-to-spectrum recovery benchmark without rendering evaluation.
+- More than six code channels (two RGB passes), or full spectral rendering.
+- Scene- or instance-specific regressors, lookup tables of evaluation
+  answers, or anything that needs the held-out spectra.
+- External spectra or re-downloaded source databases.
+- Changing the evaluator's renderer, ground truth, exposure or metrics.

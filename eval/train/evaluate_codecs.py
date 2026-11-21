@@ -313,7 +313,7 @@ def build_instances(a: Assets) -> Instances:
     rng = _rng(4)
     proxy = (rng.integers(nr, size=(N_CHAINS, 3)), mixed_lights(rng, N_CHAINS))
     rng = _rng(6)
-    upsample_pairs = (rng.integers(nr, size=N_PAIRS), mixed_lights(rng, N_PAIRS))
+    upsample_pairs = pairs(a.broad, rng, N_PAIRS)  # broadband scenes, as in the paper's RGB-asset tests
 
     rng = _rng(5)
     s, p, m, d = N_SCENES, PIXELS_PER_SCENE, MATERIALS_PER_SCENE, MAX_DEPTH

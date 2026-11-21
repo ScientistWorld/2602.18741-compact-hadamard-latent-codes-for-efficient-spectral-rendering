@@ -2,27 +2,42 @@
 
 ## Data
 
-Use the provided spectral reflectance and illumination datasets and the fixed train/test split created for this benchmark. Do not add external measured spectra, synthetic spectra, rendered scenes, lights, or textures for training or tuning. The paper's claim is about a compact spectral representation learned and evaluated on this problem distribution; adding more spectra changes the benchmark rather than improving the method.
+Train, tune and select only on the spectra in `data/spectra_train.json`.
+Do not add external spectra of any kind: no other reflectance or light
+databases, no re-download of the public Munsell, CIE or lamp sources these
+spectra were built from, and no extra synthetic spectra. The held-out test
+spectra are drawn from the same public sources, so bringing them in is
+training on the test set. Generating new training *combinations* of the
+provided spectra (products, chains, mixtures, scaled lights) is allowed.
 
-The held-out spectral test set and rendered evaluation scenes must not be used for training, model selection, threshold selection, or early stopping.
+The held-out spectra, the hidden evaluator and its instances must not be read
+or used for training, model selection or early stopping.
 
 ## Evaluation Budget
 
-The main submission must include a compact setting with no more than two RGB-equivalent render passes per image. A higher-quality setting may be reported separately, but it cannot replace the compact setting for the main score. This prevents a trivial improvement from using full spectral rendering or simply increasing the number of wavelength samples.
+The submitted code has at most six channels, i.e. two RGB-equivalent render
+passes. The evaluator measures this from the submitted networks and fails
+any submission above it; a wider "higher quality" setting cannot be scored.
 
 ## Ground Truth and Baselines
 
-Use the benchmark's 47-channel spectral renderer output as ground truth. The RGB baseline must use the same scene, camera, materials, lights, resolution, sampler, and display conversion as the candidate evaluation. Do not change scene content or illumination to make the candidate method easier to score.
+Ground truth is 47-sample spectral rendering on the evaluator's instances.
+The RGB baseline, the exposure rules, the colour science and all instances
+are fixed by `eval/` and are not part of a submission.
 
 ## Problem Formulation
 
-The candidate must solve compact spectral rendering or compact spectral asset representation for rendering. It may not submit full 47-channel spectral rendering, scene-specific image regression, manual per-scene color correction, or lookup tables fitted directly to the evaluation images as the main method.
+A submission is a compact spectral representation: encoders for spectral
+assets, a decoder for rendered codes and, for legacy assets, RGB upsamplers.
+Rendering between them is done by the evaluator with per-channel products,
+scaling and sums only. Do not try to identify specific assets or scenes,
+memorise answers, or encode information that only works for the evaluator's
+particular instances.
 
 ## Compliance Checklist
 
-- [ ] Uses only the benchmark-provided training spectra and assets
-- [ ] Does not train, tune, or select models on held-out test spectra or rendered test images
-- [ ] Reports a main setting using no more than two RGB-equivalent render passes
-- [ ] Uses 47-channel spectral renders as ground truth for all accuracy metrics
-- [ ] Evaluates the RGB baseline under matched scene and rendering settings
-- [ ] Does not replace the task with full spectral rendering or per-scene image regression
+- [ ] Uses only `data/spectra_train.json` for training and selection
+- [ ] No external or re-downloaded spectra, no use of held-out spectra
+- [ ] Code width at most six channels (two RGB passes)
+- [ ] Encoders act on one asset at a time; the decoder sees only the rendered code
+- [ ] Submission is `outputs/<method>/codec.json` in the documented format

@@ -40,9 +40,14 @@ TRAINED = {
     "reference": [],
     "reference_seed2": ["--seed", str(SEED + 1)],
     "reference_seed3": ["--seed", str(SEED + 2)],
+    "reference_seed4": ["--seed", str(SEED + 3)],
+    "reference_seed5": ["--seed", str(SEED + 4)],
     "better_chain": ["--lambda-chain", "0.5"],
     "better_exposure": ["--exposure-normalize"],
     "better_color": ["--lambda-col", "2.0"],
+    "better_sep_upsampler": [],
+    "better_color_chain": ["--lambda-col", "2.0", "--lambda-chain", "0.5"],
+    "better_color_chain_sep": ["--lambda-col", "2.0", "--lambda-chain", "0.5"],
     "better_chain_exposure": ["--lambda-chain", "0.5", "--exposure-normalize"],
     "better_long": ["--patience", "0", "--epochs", "450"],
     "variant_band_init": ["--init", "bands"],
@@ -53,6 +58,7 @@ TRAINED = {
     "shortcut_k9": ["--k", "9"],
 }
 NO_UPSAMPLER = {"shortcut_k9"}
+UPSAMPLER_ARGS = {"better_sep_upsampler": ["--separate"], "better_color_chain_sep": ["--separate"]}
 
 
 def log(msg: str) -> None:
@@ -83,7 +89,7 @@ def train_case(case: str, args: list[str]) -> str:
     start = time.time()
     run([PY, "method/train_codec.py", "--output", str(out), "--method-name", case] + args, logfile)
     if case not in NO_UPSAMPLER:
-        run([PY, "method/train_upsampler.py", "--codec-dir", str(out), "--seed", str(seed_of(args))], logfile)
+        run([PY, "method/train_upsampler.py", "--codec-dir", str(out), "--seed", str(seed_of(args))] + UPSAMPLER_ARGS.get(case, []), logfile)
     (out / "done.json").write_text(json.dumps({"seconds": time.time() - start, "args": args}))
     return f"{case}: trained in {time.time() - start:.0f}s"
 
@@ -255,8 +261,9 @@ def main() -> None:
         shutil.move(str(old), ROOT / "tmp/outputs_pre_hardening")
 
     smoke()
-    order = ["reference", "reference_seed2", "reference_seed3", "better_chain_exposure", "better_exposure", "better_chain",
-             "better_color", "better_long", "weaker_k3", "ablation_rec_only", "weaker_one_epoch", "variant_band_init",
+    order = ["better_long", "reference", "reference_seed2", "reference_seed3", "reference_seed4", "reference_seed5",
+             "better_sep_upsampler", "better_color_chain", "better_color_chain_sep", "better_chain_exposure", "better_exposure", "better_chain",
+             "better_color", "weaker_k3", "ablation_rec_only", "weaker_one_epoch", "variant_band_init",
              "shortcut_munsell_leak", "shortcut_k9"]
     jobs = [(baseline_case,), (closed_form_case, "closed_box6"), (closed_form_case, "closed_pca6")]
     jobs = [(train_case, c, TRAINED[c]) for c in order] + jobs

@@ -6,13 +6,31 @@
       "weight": 0.15,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error against the 47-sample spectral product."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error (tail behaviour)."},
-        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample ||decoded - true|| / ||true|| over the 47 samples."}
+        "mean_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean CIE94 colour error against the 47-sample spectral product."
+        },
+        "p95_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "95th-percentile CIE94 error (tail behaviour)."
+        },
+        "spectral_nrmse": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean per-sample ||decoded - true|| / ||true|| over the 47 samples."
+        }
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94": 0.0
+        }
       }
     },
     "spectral_product_narrowband": {
@@ -20,13 +38,31 @@
       "weight": 0.2,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error against the 47-sample spectral product."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error (tail behaviour)."},
-        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample relative spectral error."}
+        "mean_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean CIE94 colour error against the 47-sample spectral product."
+        },
+        "p95_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "95th-percentile CIE94 error (tail behaviour)."
+        },
+        "spectral_nrmse": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean per-sample relative spectral error."
+        }
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94": 0.0
+        }
       }
     },
     "multibounce_narrowband": {
@@ -34,13 +70,31 @@
       "weight": 0.1,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 error after three interactions."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error after three interactions."},
-        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-sample relative spectral error after three interactions."}
+        "mean_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean CIE94 error after three interactions."
+        },
+        "p95_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "95th-percentile CIE94 error after three interactions."
+        },
+        "spectral_nrmse": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean per-sample relative spectral error after three interactions."
+        }
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94": 0.0
+        }
       }
     },
     "multibounce_proxy": {
@@ -48,14 +102,38 @@
       "weight": 0.1,
       "primary_metric": "mean_delta_e94_3bounce",
       "metrics": {
-        "mean_delta_e94_1bounce": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean CIE94 error of S1."},
-        "mean_delta_e94_2bounce": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean CIE94 error of S2."},
-        "mean_delta_e94_3bounce": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 error of S3."}
+        "mean_delta_e94_1bounce": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean CIE94 error of S1."
+        },
+        "mean_delta_e94_2bounce": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean CIE94 error of S2."
+        },
+        "mean_delta_e94_3bounce": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean CIE94 error of S3."
+        }
       },
-      "_paper_reported": {"hadamard_k6": {"mean_delta_e94_1bounce": 2.16, "mean_delta_e94_2bounce": 1.79, "mean_delta_e94_3bounce": 1.74}},
+      "_paper_reported": {
+        "hadamard_k6": {
+          "mean_delta_e94_1bounce": 2.16,
+          "mean_delta_e94_2bounce": 1.79,
+          "mean_delta_e94_3bounce": 1.74
+        }
+      },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94_3bounce": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94_3bounce": 1.74}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94_3bounce": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94_3bounce": 1.74
+        }
       }
     },
     "rendered_scenes": {
@@ -63,28 +141,74 @@
       "weight": 0.3,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean per-pixel CIE94 error against the spectral render."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile per-pixel CIE94 error."},
-        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean per-pixel relative spectral error."}
+        "mean_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean per-pixel CIE94 error against the spectral render."
+        },
+        "p95_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "95th-percentile per-pixel CIE94 error."
+        },
+        "spectral_nrmse": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean per-pixel relative spectral error."
+        }
       },
-      "_paper_reported": {"hadamard_k6": {"narrowband_image_mse_by_depth": [0.000817, 0.000788, 0.00072, 0.000711], "note": "Fig. 9 per-pixel image MSE for 1, 2, 3 and unbounded bounces in one Mitsuba scene; not on this gym's scale."}},
+      "_paper_reported": {
+        "hadamard_k6": {
+          "narrowband_image_mse_by_depth": [
+            0.000817,
+            0.000788,
+            0.00072,
+            0.000711
+          ],
+          "note": "Fig. 9 per-pixel image MSE for 1, 2, 3 and unbounded bounces in one Mitsuba scene; not on this gym's scale."
+        }
+      },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94": 0.0
+        }
       }
     },
     "rgb_upsampling": {
-      "description": "Legacy-RGB assets: only each held-out asset's linear-sRGB value is given to the method's upsampler; the product (half broadband, half narrowband lights) is compared with the true spectral product (Sec. 5, Figs. 3-4).",
+      "description": "Legacy-RGB assets under broadband lights, the setting of the paper's RGB-asset scenes (Figs. 3-4): only each held-out asset's linear-sRGB value is given to the method's upsampler; the decoded product is compared with the true spectral product (Sec. 5).",
       "weight": 0.15,
       "primary_metric": "mean_delta_e94",
       "metrics": {
-        "mean_delta_e94": {"higher_is_better": false, "coefficient": 1.0, "description": "Mean CIE94 colour error of upsampled-asset products."},
-        "p95_delta_e94": {"higher_is_better": false, "coefficient": 0.5, "description": "95th-percentile CIE94 error of upsampled-asset products."},
-        "spectral_nrmse": {"higher_is_better": false, "coefficient": 0.5, "description": "Mean relative spectral error of upsampled-asset products."}
+        "mean_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 1.0,
+          "description": "Mean CIE94 colour error of upsampled-asset products."
+        },
+        "p95_delta_e94": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "95th-percentile CIE94 error of upsampled-asset products."
+        },
+        "spectral_nrmse": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Mean relative spectral error of upsampled-asset products."
+        }
       },
       "results": {
-        "rgb_baseline": {"type": "baseline", "mean_delta_e94": 0.0},
-        "hadamard_k6": {"type": "proposed", "mean_delta_e94": 0.0}
+        "rgb_baseline": {
+          "type": "baseline",
+          "mean_delta_e94": 0.0
+        },
+        "hadamard_k6": {
+          "type": "proposed",
+          "mean_delta_e94": 0.0
+        }
       }
     }
   }
