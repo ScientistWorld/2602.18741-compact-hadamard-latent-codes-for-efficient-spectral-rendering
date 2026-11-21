@@ -19,7 +19,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 REFERENCE = "reference"
-SEEDS = ["reference", "reference_seed2", "reference_seed3", "reference_seed4", "reference_seed5"]
+SEEDS = ["reference", "reference_seedset2", "reference_seedset3"]
 
 
 def load():
@@ -81,7 +81,7 @@ def main() -> None:
 
     exps = list(ref)
     lines = ["# Hardening suite summary", ""]
-    lines.append(f"Seed spread (max-min over {len(seed_vals)} seeds) of rank gain: honest cohort {seed_spread_honest:.4f}, all cohort {seed_spread_main:.4f}; honest-cohort seed mean {seed_mean_honest:+.4f}, std {seed_std_honest:.4f}.")
+    lines.append(f"Seed spread (max-min over {len(seed_vals)} disjoint restart-seed sets) of rank gain: honest cohort {seed_spread_honest:.4f}, all cohort {seed_spread_main:.4f}; honest-cohort seed mean {seed_mean_honest:+.4f}, std {seed_std_honest:.4f}.")
     lines.append("")
     header = "| case | status | gain (all) | gain (honest) | pairwise | " + " | ".join(f"{e} {ref[e]['primary_metric']}" for e in exps) + " |"
     lines += [header, "|" + "---|" * (5 + len(exps))]

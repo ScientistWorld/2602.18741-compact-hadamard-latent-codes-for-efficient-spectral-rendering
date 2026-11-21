@@ -8,7 +8,10 @@ lambda_col = 0.5 (the selected configuration), Adam with lr 1e-3, batch 128,
 up to 150 epochs with early stopping (patience 15) on a validation subset drawn
 once at random from the training spectra (shared by all runs), and scaling
 augmentation of the lights.
-An epoch is one pass over all training reflectance-illuminant pairs.
+An epoch is one pass over all training reflectance-illuminant pairs. Like the
+paper, which reports the codec selected from many trained runs, the
+configuration is trained from 5 independent restarts and the restart with the
+lowest validation loss is kept.
 
 Optional flags (off by default) implement variants that go beyond the paper.
 """
@@ -42,6 +45,7 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--seed", type=int, default=260218741, help="optimisation seed (initialisation, pair order, augmentation)")
     p.add_argument("--split-seed", type=int, default=20260221, help="seed of the one-off validation draw, shared by all runs")
+    p.add_argument("--restarts", type=int, default=5, help="independent restarts; the lowest validation loss is kept")
     p.add_argument("--lambda-e2e", type=float, default=0.5)
     p.add_argument("--lambda-rec", type=float, default=0.75)
     p.add_argument("--lambda-code", type=float, default=1.0)
@@ -185,17 +189,29 @@ def main(argv=None) -> None:
     args = parse_args(argv)
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
-    trainer = Trainer(args)
-    log = trainer.run()
+    # Independent restarts (seeds seed .. seed+R-1) of the same configuration on
+    # the same data; keep the one with the lowest validation loss. Selection
+    # uses the training spectra only.
+    best = None
+    restarts = []
+    for i in range(args.restarts):
+        run_args = argparse.Namespace(**{**vars(args), "seed": args.seed + i})
+        trainer = Trainer(run_args)
+        log = trainer.run()
+        restarts.append({k: log[k] for k in ("best_validation_loss", "epochs_run", "seconds")} | {"seed": run_args.seed})
+        if best is None or log["best_validation_loss"] < best[1]["best_validation_loss"]:
+            best = (trainer, log, run_args.seed)
+    trainer, log, seed = best
     torch.save({"state_dict": trainer.codec.state_dict(), "k": args.k}, out / "codec.pt")
     codec = {"method": args.method_name or out.name, "k": args.k}
     codec.update(trainer.codec.export())
     codec_path = out / "codec.json"
-    if codec_path.exists():  # keep an upsampler trained earlier only if it matches; otherwise drop it
+    if codec_path.exists():  # a new codec invalidates any upsampler trained for the old one
         codec_path.unlink()
     codec_path.write_text(json.dumps(codec))
-    (out / "train_log.json").write_text(json.dumps({"config": vars(args), **log}, indent=2))
-    print(json.dumps({k: v for k, v in log.items() if k != "validation_history"}, indent=2))
+    summary = {"config": vars(args), "selected_seed": seed, "restarts": restarts, **log}
+    (out / "train_log.json").write_text(json.dumps(summary, indent=2))
+    print(json.dumps({k: v for k, v in summary.items() if k not in ("validation_history", "config")}, indent=2))
 
 
 if __name__ == "__main__":

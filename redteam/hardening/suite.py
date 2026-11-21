@@ -37,25 +37,25 @@ SEED = 260218741
 PY = sys.executable
 
 TRAINED = {
+    # Every codec uses train_codec.py's default protocol (5 restarts, lowest validation loss kept)
+    # unless --restarts is given. The reference procedure is repeated on disjoint restart seeds.
     "reference": [],
-    "reference_seed2": ["--seed", str(SEED + 1)],
-    "reference_seed3": ["--seed", str(SEED + 2)],
-    "reference_seed4": ["--seed", str(SEED + 3)],
-    "reference_seed5": ["--seed", str(SEED + 4)],
-    "better_chain": ["--lambda-chain", "0.5"],
-    "better_exposure": ["--exposure-normalize"],
+    "reference_seedset2": ["--seed", str(SEED + 5)],
+    "reference_seedset3": ["--seed", str(SEED + 10)],
     "better_color": ["--lambda-col", "2.0"],
     "better_sep_upsampler": [],
     "better_color_chain": ["--lambda-col", "2.0", "--lambda-chain", "0.5"],
     "better_color_chain_sep": ["--lambda-col", "2.0", "--lambda-chain", "0.5"],
+    "better_chain": ["--lambda-chain", "0.5"],
+    "better_exposure": ["--exposure-normalize"],
     "better_chain_exposure": ["--lambda-chain", "0.5", "--exposure-normalize"],
-    "better_long": ["--patience", "0", "--epochs", "450"],
     "variant_band_init": ["--init", "bands"],
-    "weaker_one_epoch": ["--epochs", "1"],
+    "variant_single_run": ["--restarts", "1"],
+    "weaker_one_epoch": ["--epochs", "1", "--restarts", "1"],
     "weaker_k3": ["--k", "3"],
     "ablation_rec_only": ["--lambda-e2e", "0", "--lambda-code", "0", "--lambda-col", "0", "--lambda-rec", "1"],
     "shortcut_munsell_leak": ["--extra-reflectances-from", "eval/test/test_assets.json"],
-    "shortcut_k9": ["--k", "9"],
+    "shortcut_k9": ["--k", "9", "--restarts", "1"],
 }
 NO_UPSAMPLER = {"shortcut_k9"}
 UPSAMPLER_ARGS = {"better_sep_upsampler": ["--separate"], "better_color_chain_sep": ["--separate"]}
@@ -261,10 +261,10 @@ def main() -> None:
         shutil.move(str(old), ROOT / "tmp/outputs_pre_hardening")
 
     smoke()
-    order = ["better_long", "reference", "reference_seed2", "reference_seed3", "reference_seed4", "reference_seed5",
-             "better_sep_upsampler", "better_color_chain", "better_color_chain_sep", "better_chain_exposure", "better_exposure", "better_chain",
-             "better_color", "weaker_k3", "ablation_rec_only", "weaker_one_epoch", "variant_band_init",
-             "shortcut_munsell_leak", "shortcut_k9"]
+    order = ["reference", "reference_seedset2", "reference_seedset3", "better_color", "better_color_chain_sep",
+             "better_color_chain", "better_chain", "better_sep_upsampler", "better_exposure", "better_chain_exposure",
+             "variant_band_init", "weaker_k3", "ablation_rec_only", "shortcut_munsell_leak", "variant_single_run",
+             "weaker_one_epoch", "shortcut_k9"]
     jobs = [(baseline_case,), (closed_form_case, "closed_box6"), (closed_form_case, "closed_pca6")]
     jobs = [(train_case, c, TRAINED[c]) for c in order] + jobs
     run_parallel(jobs, workers)
